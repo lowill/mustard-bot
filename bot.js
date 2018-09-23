@@ -55,6 +55,13 @@ client.on('ready', () => {
     scheduledJobs.push(scheduledJob);
   });
 
+  scheduledJobs.forEach(job => {
+    setInterval(() => {
+      const nextInvocation = job.nextInvocation();
+      console.log(`Next scheduled invocation for job ${job.name}: ${moment(nextInvocation).format('h:mma zZ')}`);
+    }, 1000 * 60 * 60);
+  });
+
   console.log('Completed initialization tasks.');
 
   // create Twitter client

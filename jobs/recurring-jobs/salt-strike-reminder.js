@@ -1,4 +1,5 @@
 module.exports = {
+  name: 'salt-strike-time-reminder',
   recurrenceRule: {
     hour: [23, 10],
     minute: 0,
