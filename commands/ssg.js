@@ -1,10 +1,18 @@
 const Jimp = require('jimp');
+const { prefix } = require('../config.json');
 
 module.exports = {
   name: 'ssg',
   description: 'creates a meme image from template and posts it to channel',
   execute: async function(message, args) {
-    const name = args.shift();
+    // prefix + space + 'ssg'
+    let name = message.content.substring(prefix.length + 4);
+    if(name === undefined || name === '') {
+      message.channel.send(`You forgot to type a name.  Try to keep it short.`);
+      return;
+    }
+    name = name.toUpperCase();
+
     const memeText = `SASUGA ${name}- SAMA!!!`;
     const memeText2 = `IMPREGNATE ME ${name}- SAMA!!!`;
 
