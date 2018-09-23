@@ -104,6 +104,10 @@ client.on('reconnecting', () => {
   console.log('Client is attempting to reconnect.');
 });
 
+client.on('resume', () => {
+  console.log('Client successfully reconnected.');
+});
+
 
 // bot commands
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
