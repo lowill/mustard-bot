@@ -1,0 +1,1 @@
+A helper bot designed for Salt and Pepper crew playing Granblue Fantasy.
