@@ -7,6 +7,7 @@ const moment = require('moment-timezone');
 
 const RecurringJobs = require('./jobs/RecurringJobs.js');
 
+const Constants = require('./constants/Constants.js');
 const { token, prefix, twitter_keys } = require('./config.json');
 const channels = require('./channels.json').channels;
 
@@ -25,6 +26,13 @@ const resources = {
   DiscordClient: client
 };
 
+// initialize commands
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+for(const file of commandFiles) {
+  const command = require(`./commands/${file}`);
+  client.commands.set(command.name, command);
+}
+
 // Event handling
 // Startup tasks
 client.on('ready', () => {
@@ -40,6 +48,7 @@ client.on('ready', () => {
   chatJobs.forEach(job => {
     // Safety method for testing.  If any jobs try to chat, they will only have access to the bot test channel
     const channelKey = testMode ? 'test' : job.data.channelKey;
+    // initialize chat functions, don't want to create chat functions all over the place
     if(!(channelKey in chatFunctions)) {
       chatFunctions[channelKey] = createChatFunctionFromKey(channelKey);
     }
@@ -62,7 +71,7 @@ client.on('ready', () => {
     }, 1000 * 60 * 60);
   });
 
-  console.log('Completed initialization tasks.');
+  console.log(`${moment().format(Constants.loggingFormat)} Completed initialization tasks`);
 
   // create Twitter client
   const TwitterClient = new Twitter({
@@ -73,7 +82,8 @@ client.on('ready', () => {
   resources.TwitterClient = TwitterClient;
 
   return;
- 
+  
+  // This is stupid and I know it's stupid but I have this here so I can hard code some chat messages
   function createChatFunctionFromKey(key) {
     const channelId = channels[key].channelId;
     const chatFn = ClientUtils.chatFactory(channelId);
@@ -116,12 +126,7 @@ client.on('resume', () => {
 });
 
 
-// bot commands
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-for(const file of commandFiles) {
-  const command = require(`./commands/${file}`);
-  client.commands.set(command.name, command);
-}
+
 
 
 client.login(token);
