@@ -3,7 +3,7 @@ const targetChannelId = require('../channels.json').channels['salt-lobby'].chann
 const { prefix } = require('../config.json');
 module.exports = {
   name: 'say',
-  description: 'says things',
+  description: 'Makes the bot speak (in the lobby channel).  This command is only usable by its creator.',
   execute(message, args, resources) {
     // Only allow us to use this command
     if(message.author.id !== '161221472495468544') return;

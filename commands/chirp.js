@@ -1,6 +1,6 @@
 module.exports = {
   name: 'chirp',
-  description: 'fetches a tweet (with media) and posts any extra images that Discord did not embed.',
+  description: `Posts additional images from a Tweet, because Discord only embeds one Tweet image.  Will sometimes fail, no known fix.`,
   execute(message, args, resources) {
     const url = args.shift();
     if(!url || !url.match(/http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/)) {

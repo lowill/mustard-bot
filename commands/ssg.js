@@ -3,7 +3,7 @@ const { prefix } = require('../config.json');
 
 module.exports = {
   name: 'ssg',
-  description: 'creates a meme image from template and posts it to channel',
+  description: 'Creates a meme image from the sasuga template and posts it to channel.',
   execute: async function(message, args) {
     // prefix + space + 'ssg'
     let name = message.content.substring(prefix.length + 4);
