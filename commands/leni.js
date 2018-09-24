@@ -1,6 +1,6 @@
 module.exports = {
   name: 'leni',
-  description: 'Posts a Leni meme image',
+  description: 'Posts a Leni meme image.',
   execute(message, args) {
     message.channel.send('', {
       files: [{

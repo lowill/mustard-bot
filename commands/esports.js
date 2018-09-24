@@ -1,6 +1,6 @@
 module.exports = {
   name: 'esports',
-  description: 'Posts an eSports meme image',
+  description: 'Posts an eSports meme image.',
   execute(message, args) {
     message.channel.send('', {
       files: [{
