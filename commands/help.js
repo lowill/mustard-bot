@@ -5,7 +5,7 @@ const { prefix } = require('../config.json');
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 const helpData = {};
-const ignoreList = ['help.js', 'set-presence.js'];
+const ignoreList = ['help.js', 'set-presence.js', 'say.js'];
 
 
 for(const file of commandFiles) {
