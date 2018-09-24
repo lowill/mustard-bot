@@ -3,7 +3,7 @@ module.exports = {
   description: 'fetches a tweet (with media) and posts any extra images that Discord did not embed.',
   execute(message, args, resources) {
     const url = args.shift();
-    if(!url.match(/http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/)) {
+    if(!url || !url.match(/http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/)) {
       console.error(`Failed to validate Tweet with url:${url}`);
       message.channel.send(`Are you sure that was a valid Twitter URL?  I couldn't read it.`);
     }
