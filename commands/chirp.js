@@ -1,19 +1,19 @@
 module.exports = {
   name: 'chirp',
-  description: `Posts additional images from a Tweet, because Discord only embeds one Tweet image.  Will sometimes fail, no known fix.`,
+  description: `Posts additional images from a Tweet, because Discord only embeds one Tweet image.`,
   execute(message, args, resources) {
-    const url = args.shift();
-    if(!url || !url.match(/http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/)) {
+    const url = message.content.match(/http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)\/status(?:es)?\/([0-9]+)/);
+    if(!url) {
       console.error(`Failed to validate Tweet with url:${url}`);
       message.channel.send(`Are you sure that was a valid Twitter URL?  I couldn't read it.`);
     }
     else if(!('TwitterClient' in resources)) {
       console.error(`TwitterClient not initialized.`);
-      message.channel.send(`Something went wrong, sorry.`);
+      message.channel.send(`Failed to connect to Twitter.`);
     }
     else {
-      const id = url.split('/').pop();
-      resources.TwitterClient.get(`statuses/show`, {id: id})
+      const id = url[2];
+      resources.TwitterClient.get(`statuses/show`, {id: id, tweet_mode: 'extended'})
         .then(res => {
           if('extended_entities' in res) {
             if('media' in res.extended_entities) {
