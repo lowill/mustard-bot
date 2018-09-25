@@ -32,9 +32,6 @@ module.exports = {
   description: `Moderator use only.  This command will send a prewritten message to a user about their inactivity. You must include their full username. Usage: "~warn-inactive KrazyMustard#8015"`,
   execute(message, args, resources) {
     // Admins or owner only.
-    console.log(`adminRoleId: ${adminRoleId}, has role? ${message.member.roles.has(adminRoleId)}`);
-    console.log(`ownerId: ${ownerId}, authorId: ${message.author.id} equal? ${message.author.id === ownerId}`);
-
     if(!(message.member.roles.has(adminRoleId) || message.author.id === ownerId)) return;
 
     let target = args.slice()[0];
