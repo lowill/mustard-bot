@@ -1,5 +1,8 @@
 const Discord = require('discord.js');
 const fs = require('fs');
+const { guildRoles, ownerId } = require('../config.json');
+
+const adminRoleId = guildRoles.find(role => role.name === 'Captains').roleId;
 
 let inactivityEmbed;
 
@@ -15,7 +18,7 @@ new Promise((resolve, reject) => {
 })
 .then(text =>
   inactivityEmbed = new Discord.RichEmbed()
-    .setAuthor(`S.A.L.T. and Pepper administrators`)
+    .setAuthor(`S.A.L.T. and Pepper Administrators`)
     .setColor(0xee1133)
     .setTitle('Inactivity Warning')
     .setDescription(text)
@@ -24,11 +27,16 @@ new Promise((resolve, reject) => {
 .catch(err => console.error);
 
 
-
 module.exports = {
   name: 'warn-inactive',
-  description: 'Moderator use only.  This command will send a prewritten message to a user about their inactivity.',
+  description: `Moderator use only.  This command will send a prewritten message to a user about their inactivity. You must include their full username. Usage: "~warn-inactive KrazyMustard#8015"`,
   execute(message, args, resources) {
+    // Admins or owner only.
+    console.log(`adminRoleId: ${adminRoleId}, has role? ${message.member.roles.has(adminRoleId)}`);
+    console.log(`ownerId: ${ownerId}, authorId: ${message.author.id} equal? ${message.author.id === ownerId}`);
+
+    if(!(message.member.roles.has(adminRoleId) || message.author.id === ownerId)) return;
+
     let target = args.slice()[0];
     if(!target) return;
     // get the "discriminator" if included
