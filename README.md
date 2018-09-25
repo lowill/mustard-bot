@@ -5,7 +5,7 @@ A helper bot designed for Salt and Pepper crew playing Granblue Fantasy.
 Uses [Discord.js](https://discord.js.org/#/).
 
 ## Requirements
-1. Node
+1. NodeJS (Latest should be fine)
 2. git
 
 I recommend setting up a virtualenv and nodeenv.
@@ -17,7 +17,7 @@ I recommend setting up a virtualenv and nodeenv.
 4. ``virtualenv ~/virtualenv/develop``
 5. ``nodeenv ~/virtualenv/develop/nodeenv``
 
-#### Optional:
+#### Optional (strongly recommended):
 Add the following to your ~/.bash_profile or ~/.bashrc file.
 ```
 ve-develop() {
