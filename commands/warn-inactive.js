@@ -22,7 +22,7 @@ new Promise((resolve, reject) => {
     .setColor(0xee1133)
     .setTitle('Inactivity Warning')
     .setDescription(text)
-    .setFooter(`This is an automated message.  Please do not reply.`)
+    .setFooter(`This is an automated message.  This channel is not monitored.  Please do not reply to this bot.`)
 )
 .catch(err => console.error);
 
