@@ -1,0 +1,10 @@
+{
+  "channels": {
+    "test": {
+      "channelId": "[TEST CHANNEL ID HERE]"
+    },
+    "general": {
+      "channelId": ""
+    }
+  }
+}

@@ -8,7 +8,7 @@ const moment = require('moment-timezone');
 const RecurringJobs = require('./jobs/RecurringJobs.js');
 
 const Constants = require('./constants/Constants.js');
-const { token, prefix, twitter_keys } = require('./config.json');
+const { discordToken, prefix, twitter_keys } = require('./config.json');
 const channels = require('./channels.json').channels;
 
 
@@ -129,4 +129,4 @@ client.on('resume', () => {
 
 
 
-client.login(token);
+client.login(discordToken);
