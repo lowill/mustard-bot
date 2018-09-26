@@ -38,6 +38,9 @@ for(const file of commandFiles) {
 client.on('ready', () => {
   console.log('Client is ready.');
 
+  // Write a channels list to disk, for developer convenience
+  writeChannelsList(client);
+
   // start recurring jobs
   const chatFunctions = {};
   const scheduledJobs = [];
@@ -80,15 +83,6 @@ client.on('ready', () => {
     bearer_token: twitter_keys.bearer_token
   });
   resources.TwitterClient = TwitterClient;
-
-  return;
-  
-  // This is stupid and I know it's stupid but I have this here so I can hard code some chat messages
-  function createChatFunctionFromKey(key) {
-    const channelId = channels[key].channelId;
-    const chatFn = ClientUtils.chatFactory(channelId);
-    return chatFn;
-  }
 });
 
 client.on('message', message => {
@@ -125,8 +119,42 @@ client.on('resume', () => {
   console.log('Client successfully reconnected.');
 });
 
+client.on('guildMemberAdd', member => {
+  setTimeout(() => {
 
+  }, 5000)
+});
 
+// For your convenience this function simply creates a JSON file of all the channels to which your bot has access
+function writeChannelsList(discordClient) {
+  const guilds = client.guilds.map(guild => {
+    const channelsList = guild.channels.map(channel => {
+      return {
+        name: channel.name,
+        type: 'GUILD.CHANNEL',
+        id: channel.id
+      };
+    });
+    return {
+      name: guild.name,
+      type: 'GUILD',
+      id: guild.id,
+      channels: channelsList
+    }
+  });
 
+  const writeStream = fs.createWriteStream('./AvailableChannels.json', 'utf8');
+  writeStream.cork();
+  writeStream.write(`//THIS IS AN AUTOMATICALLY GENERATED FILE.  YOUR CHANGES WILL BE OVERWRITTEN.\n`);
+  writeStream.write(JSON.stringify(guilds, null, 2));
+  writeStream.uncork();
+  writeStream.end();
+}
+
+function createChatFunctionFromKey(key) {
+  const channelId = channels[key].channelId;
+  const chatFn = ClientUtils.chatFactory(channelId);
+  return chatFn;
+}
 
 client.login(discordToken);
