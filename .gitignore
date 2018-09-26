@@ -75,3 +75,4 @@ typings/
 # Config
 config.json
 channels.json
+AvailableChannels.json
