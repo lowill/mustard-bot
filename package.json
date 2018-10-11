@@ -1,6 +1,6 @@
 {
   "name": "mustard-bot",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Salt and Pepper helper",
   "main": "bot.js",
   "author": "Will",
