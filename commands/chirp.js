@@ -1,4 +1,7 @@
+const Discord = require('discord.js');
 const Config = require('@config/config.json');
+const Constants = require('@constants/Constants.js');
+
 module.exports = {
   name: 'chirp',
   description: `Posts additional images from a Tweet, because Discord only embeds one Tweet image. Usage: \`\`${Config.prefix}chirp [tweet URL]\`\``,
@@ -21,9 +24,18 @@ module.exports = {
               const media = res.extended_entities.media;
               const mediaUrls = media.map(item => item.media_url);
               if(mediaUrls.length > 1) {
-                message.channel.send(`Remaining Images:`, {
-                  files: mediaUrls.slice(1)
-                });                
+                mediaUrls.shift(); // remove the first image as Discord will have already posted it.
+                const firstMessage = message.channel.send(`Remaining Images:`);
+                mediaUrls.reduce((prevMessage, url, index) => {
+                  return prevMessage
+                    .then(res => {
+                      return message.channel.send(``, 
+                        new Discord.RichEmbed()
+                          .setTitle(`Image ${index+2} of ${media.length}`)
+                          .setImage(url)
+                      );
+                    });
+                }, firstMessage);
               }
               else {
                 message.channel.send(`No remaining images.`);
