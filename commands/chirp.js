@@ -1,6 +1,7 @@
+const Config = require('@config/config.json');
 module.exports = {
   name: 'chirp',
-  description: `Posts additional images from a Tweet, because Discord only embeds one Tweet image.`,
+  description: `Posts additional images from a Tweet, because Discord only embeds one Tweet image. Usage: \`\`${Config.prefix}chirp [tweet URL]\`\``,
   execute(message, args, resources) {
     const url = message.content.match(/http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)\/status(?:es)?\/([0-9]+)/);
     if(!url) {

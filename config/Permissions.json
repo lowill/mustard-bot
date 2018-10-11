@@ -1,0 +1,17 @@
+[
+  {
+    "name": "owner",
+    "permissionLevel": "0",
+    "userId": "161221472495468544"
+  },
+  {
+    "name": "admin",
+    "permissionLevel": "1",
+    "roleIds": ["413668985016680448", "405227484616065035"]
+  },
+  {
+    "name": "officer",
+    "permissionLevel": "2",
+    "roleIds": ["361474471510671361", "398609333526593538"]
+  }
+]

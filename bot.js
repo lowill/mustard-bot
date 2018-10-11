@@ -1,20 +1,23 @@
+// activate module aliases
+require('module-alias/register');
 // deps
 const Discord = require('discord.js');
 const schedule = require('node-schedule-tz');
 const fs = require('fs');
 const Twitter = require('twitter');
 const moment = require('moment-timezone');
+const Jimp = require('jimp');
 
-const RecurringJobs = require('./jobs/RecurringJobs.js');
+const RecurringJobs = require('@jobs/RecurringJobs.js');
 
-const Constants = require('./constants/Constants.js');
-const { discordToken, prefix, twitter_keys } = require('./config.json');
-const channels = require('./channels.json').channels;
-
+const Constants = require('@constants/Constants.js');
+const Config = require('@config/config.json');
+const channels = require('@config/channels.json').channels;
+const Permissions = require('@config/Permissions.json');
 
 // initialize our client
 const client = new Discord.Client();
-const ClientUtils = require('./utils/ClientUtils.js')(client);
+const DiscordUtils = require('@utils/DiscordUtils.js')(client);
 client.commands = new Discord.Collection();
 
 // cmd args
@@ -23,7 +26,8 @@ const testMode = argv['test'] ? true : false;
 
 // this object makes our connection resources available across the app 
 const resources = {
-  DiscordClient: client
+  DiscordClient: client,
+  Jimp: Jimp
 };
 
 // initialize commands
@@ -33,6 +37,114 @@ for(const file of commandFiles) {
   client.commands.set(command.name, command);
 }
 
+// get direct attachables - single commands that simply post a file to the channel
+// files should have an extension
+const attachmentDir = './commands-direct-attachments';
+const memeFiles = fs.readdirSync(attachmentDir).filter(file => file.includes('.'));
+for(const file of memeFiles) {
+  const fileName = file.match(/([\w\s-,]+)\.([a-zA-Z0-9]+)/);
+  if(fileName !== null) {
+    const name = fileName[1];
+    const extension = fileName[2];
+    const command = {
+      name: name,
+      description: `Posts a file called ${file}.`,
+      type: 'direct-attachment',
+      execute(message, args) {
+        message.channel.send('', {
+          files: [{
+            attachment: `${attachmentDir}/${file}`,
+            name: file
+          }]
+        });
+      }
+    }
+    client.commands.set(command.name, command);
+  }
+}
+
+const helpEmbeds = {
+  "everyone": new Discord.RichEmbed()
+    .setColor(Constants.mustardColorCode)
+    .setTitle(`Commands for Mustard Bot`)
+    .setDescription(`The prefix for this bot is: ${Config.prefix}`)
+};
+
+Permissions.forEach(permissionItem => {
+  helpEmbeds[permissionItem.name] = new Discord.RichEmbed()
+    .setColor(Constants.mustardColorCode)
+    .setTitle(`Commands for ${permissionItem.name}`)
+    .setDescription(`These commands are restricted to the ${permissionItem.name} level.`);
+});
+
+const directAttachmentNames = client.commands
+  .filter(command => command.type === 'direct-attachment')
+  .map(command => command.name)
+  .map(commandName => `\`\`${commandName}\`\``)
+  .join(', ');
+
+helpEmbeds['everyone']
+  .addField(`Image Attachments (Memes)`, directAttachmentNames);
+
+client.commands.filter(command => command.type !== 'direct-attachment')
+  .forEach(command => {
+    const permission = command.permissions !== undefined 
+      ? command.permissions 
+      : 'everyone';
+    helpEmbeds[permission]
+      .addField(command.name, command.description);
+  });
+
+const helpCommand = {
+  name: 'help',
+  description: 'Posts a list of commands.',
+  execute(message, args) {
+    const authorPermission = DiscordUtils.getHighestPermissionForUser(message.author);
+    const eligiblePermissions = DiscordUtils.getEligiblePermissions(authorPermission);
+
+    if(eligiblePermissions !== undefined) {
+      eligiblePermissions.forEach(level => {
+        if(helpEmbeds[level].fields.length > 0) {
+          if(level === 'everyone') {
+            message.channel.send('', helpEmbeds[level]);
+          }
+          else if(message.channel.id === Config.adminChannelId) {
+            message.channel.send('', helpEmbeds[level]);
+          }
+        }
+      });
+    }
+    else {
+      message.channel.send('', helpEmbeds['everyone']);
+    }
+  }
+};
+client.commands.set(helpCommand.name, helpCommand);
+
+// TEST
+client.commands.set(`salt`, {
+  name: 'salt',
+  description: '',
+  execute(message, args) {
+    try {
+      // const coyy = message.guild.owner;
+      const ennui = message.guild.members.get('214735371488067584');
+      // console.log(message.guild.members.find(member => member.user.id === 245762653312516097));
+
+      const authorPermission = DiscordUtils.getHighestPermissionForUser(ennui);
+      const eligiblePermissions = DiscordUtils.getEligiblePermissions(authorPermission);
+      console.log(authorPermission, eligiblePermissions);
+    }
+    catch(err) {
+      console.error(err);
+    }
+    finally {
+      message.delete();      
+    }
+  }
+})
+// END TEST
+
 // Event handling
 // Startup tasks
 client.on('ready', () => {
@@ -40,6 +152,8 @@ client.on('ready', () => {
 
   // Write a channels list to disk, for developer convenience
   writeChannelsList(client);
+  // Write a roles list to disk, for developer convenience
+  writeRolesList(client);
 
   // start recurring jobs
   const chatFunctions = {};
@@ -78,20 +192,24 @@ client.on('ready', () => {
 
   // create Twitter client
   const TwitterClient = new Twitter({
-    consumer_key: twitter_keys.consumer_key,
-    consumer_secret: twitter_keys.consumer_secret,
-    bearer_token: twitter_keys.bearer_token
+    consumer_key: Config.twitter_keys.consumer_key,
+    consumer_secret: Config.twitter_keys.consumer_secret,
+    bearer_token: Config.twitter_keys.bearer_token
   });
   resources.TwitterClient = TwitterClient;
+
+  // Set the status text
+  client.user.setPresence({ game: { name: `Say ~help for commands list` }, status: 'online' })
+    .catch(console.error);
 });
 
 client.on('message', message => {
   // Ignore messages not relevant to this bot
   // TODO: Refactor to allow comparing messages against self later, for testing purposes.
-  if (!message.content.startsWith(prefix) || message.author.bot) return;
+  if (!message.content.startsWith(Config.prefix) || message.author.bot) return;
 
   // make commands easier to digest
-  const args = message.content.slice(prefix.length).split(/ +/);
+  const args = message.content.slice(Config.prefix.length).split(/ +/);
   const command = args.shift().toLowerCase();
 
   // Ignore any commands that don't exist
@@ -99,7 +217,11 @@ client.on('message', message => {
 
   // Safe command execution
   try {
-    client.commands.get(command).execute(message, args, resources);
+    const commandObj = client.commands.get(command);
+    // Check that user has required permissions
+    if(DiscordUtils.hasPermission(message.author, commandObj)) {
+      commandObj.execute(message, args, resources);
+    }
   }
   catch(error) {
     console.error(error);
@@ -121,13 +243,22 @@ client.on('resume', () => {
 
 client.on('guildMemberAdd', member => {
   setTimeout(() => {
-
+    const sayLobby = createChatFunctionFromKey('main');
+    const greeting = `Welcome <@${member.user.id}> to this rowdy crew! Be sure to checkout <#361789980428992514> first and setup your profile to the server! Use the commands at <#361479929705136128>!`;
+    sayLobby(greeting);
   }, 5000)
 });
 
+// utils
+function createChatFunctionFromKey(key) {
+  const channelId = channels[key].channelId;
+  const chatFn = DiscordUtils.chatFactory(channelId);
+  return chatFn;
+}
+
 // For your convenience this function simply creates a JSON file of all the channels to which your bot has access
 function writeChannelsList(discordClient) {
-  const guilds = client.guilds.map(guild => {
+  const channels = discordClient.guilds.map(guild => {
     const channelsList = guild.channels.map(channel => {
       return {
         name: channel.name,
@@ -146,15 +277,35 @@ function writeChannelsList(discordClient) {
   const writeStream = fs.createWriteStream('./AvailableChannels.json', 'utf8');
   writeStream.cork();
   writeStream.write(`//THIS IS AN AUTOMATICALLY GENERATED FILE.  YOUR CHANGES WILL BE OVERWRITTEN.\n`);
-  writeStream.write(JSON.stringify(guilds, null, 2));
+  writeStream.write(JSON.stringify(channels, null, 2));
   writeStream.uncork();
   writeStream.end();
 }
 
-function createChatFunctionFromKey(key) {
-  const channelId = channels[key].channelId;
-  const chatFn = ClientUtils.chatFactory(channelId);
-  return chatFn;
+// For your convenience this function simply creates a JSON file of all the roles to which your bot has access
+function writeRolesList(discordClient) {
+  const roles = discordClient.guilds.map(guild => {
+    const rolesList = guild.roles.map(role => {
+      return {
+        name: role.name,
+        type: 'GUILD.ROLE',
+        id: role.id
+      };
+    });
+    return {
+      name: guild.name,
+      type: 'GUILD',
+      id: guild.id,
+      roles: rolesList
+    };
+  });
+
+  const writeStream = fs.createWriteStream('./AvailableRoles.json', 'utf8');
+  writeStream.cork();
+  writeStream.write(`//THIS IS AN AUTOMATICALLY GENERATED FILE.  YOUR CHANGES WILL BE OVERWRITTEN.\n`);
+  writeStream.write(JSON.stringify(roles, null, 2));
+  writeStream.uncork();
+  writeStream.end();
 }
 
-client.login(discordToken);
+client.login(Config.discordToken);

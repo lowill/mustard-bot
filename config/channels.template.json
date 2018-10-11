@@ -1,0 +1,15 @@
+// Provide any channel IDs you will need in this file.
+// They will be referenced by key
+{
+  "channels": {
+    "test": {
+      "channelId": "[TEST CHANNEL ID HERE]"
+    },
+    "main": {
+      "channelId": ""
+    },
+    "admin": {
+      "channelId": ""
+    }
+  }
+}

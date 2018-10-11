@@ -1,5 +1,7 @@
+require('module-alias/register');
+
 const assert = require('assert');
-const RecurringJobs = require('../../jobs/RecurringJobs.js');
+const RecurringJobs = require('@jobs/RecurringJobs.js');
 
 describe('Recurring Jobs', function() {
 

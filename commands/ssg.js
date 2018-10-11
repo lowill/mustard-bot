@@ -1,16 +1,15 @@
-const Jimp = require('jimp');
-const { prefix } = require('../config.json');
+const { prefix } = require('@config/config.json');
 
 module.exports = {
   name: 'ssg',
-  description: 'Creates a meme image from the sasuga template and posts it to channel.',
-  execute: async function(message, args) {
+  description: `Creates a meme image from the sasuga template and posts it to channel. Usage: \`\`${prefix}ssg [name]\`\``,
+  execute: async function(message, args, { Jimp }) {
+
+    // We don't use args so people can use any string with whitespace
     // prefix + space + 'ssg'
     let name = message.content.substring(prefix.length + 4);
-    if(name === undefined || name === '') {
-      message.channel.send(`You forgot to type a name.  Try to keep it short.`);
-      return;
-    }
+    if(name === undefined || name === '') throw new Error(`You forgot to type a name.  Try to keep it short.`);
+
     name = name.toUpperCase();
 
     const memeText = `SASUGA ${name}- SAMA!!!`;
@@ -46,15 +45,15 @@ module.exports = {
       140
     );
 
-    image.getBufferAsync(Jimp.MIME_PNG)
-      .then(imgBuffer => {
-        message.channel.send('', {
-          files: [{
-            attachment: imgBuffer,
-            name: 'ssg.png'
-          }]
-        });
-      })
-      .catch(err => console.error(err));
+    const buffer = await image
+      .getBufferAsync(Jimp.MIME_PNG)
+      .catch(console.error);
+
+    return message.channel.send('', {
+      files: [{
+        attachment: buffer,
+        name: 'ssg.png'
+      }]
+    });
   }
 };

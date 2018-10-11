@@ -1,7 +1,8 @@
+const { prefix } = require('@config/config.json');
 module.exports = {
   name: 'tavi',
-  description: 'Posts the Tavi twitch clip.',
+  description: `Posts the Tavi twitch clip. Usage: \`\`${prefix}tavi\`\``,
   execute(message, args) {
-    message.channel.send('https://clips.twitch.tv/RelentlessSleepyTruffleHoneyBadger');
+    return message.channel.send('https://clips.twitch.tv/RelentlessSleepyTruffleHoneyBadger');
   }
 };

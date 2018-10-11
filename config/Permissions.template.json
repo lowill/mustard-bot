@@ -1,0 +1,17 @@
+[
+  {
+    "name": "owner",
+    "permissionLevel": "0",
+    "userId": ""
+  },
+  {
+    "name": "admin",
+    "permissionLevel": "1",
+    "roleIds": []
+  },
+  {
+    "name": "officer",
+    "permissionLevel": "2",
+    "roleIds": []
+  }
+]

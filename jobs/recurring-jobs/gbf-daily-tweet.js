@@ -1,3 +1,5 @@
+const { channelKeys } = require('@config/config.json');
+
 module.exports = {
   name: 'daily-twitter-refresh-reminder',
   recurrenceRule: {
@@ -7,7 +9,7 @@ module.exports = {
   },
   type: 'chat',
   data: {
-    channelKey: 'salt-lobby'
+    channelKey: channelKeys.main
   },
   jobFunction: messageFn => {
     return messageFn(`@here It's tootin' time!`, {

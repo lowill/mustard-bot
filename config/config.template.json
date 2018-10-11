@@ -8,10 +8,11 @@
     "access_token_secret": "",
     "bearer_token": ""
   },
-  "guildRoles": [{
-    "name": "",
-    "roleId": ""
-  }],
   "ownerId": "",
-  "adminChannelId": ""
+  "adminChannelId": "",
+  "channelKeys": {
+    "test": "test",
+    "main": "main",
+    "admin": "admin"
+  }
 }

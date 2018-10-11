@@ -1,8 +1,7 @@
 const Discord = require('discord.js');
 const fs = require('fs');
-const { guildRoles, ownerId } = require('../config.json');
+const { prefix } = require('@config/config.json');
 
-const adminRoleId = guildRoles.find(role => role.name === 'Captains').roleId;
 
 let inactivityEmbed;
 
@@ -24,49 +23,44 @@ new Promise((resolve, reject) => {
     .setDescription(text)
     .setFooter(`This is an automated message.  This channel is not monitored.  Please do not reply to this bot.`)
 )
-.catch(err => console.error);
-
+.catch(console.error);
 
 module.exports = {
   name: 'warn-inactive',
-  description: `Moderator use only.  This command will send a prewritten message to a user about their inactivity. You must include their full username. Usage: "~warn-inactive KrazyMustard#8015"`,
+  description: `This command will send a prewritten message to a user about their inactivity. You must include their full username. Usage: \`\`${prefix}warn-inactive KrazyMustard#8015\`\``,
+  permissions: 'admin',
   execute(message, args, resources) {
-    // Admins or owner only.
-    if(!(message.member.roles.has(adminRoleId) || message.author.id === ownerId)) return;
-
     let target = args.slice()[0];
-    if(!target) return;
+    if(!target) throw new Error('Invalid user');
+
     // get the "discriminator" if included
     const match = target.match(/(.+)(#\d{4}$)/);
     if(match !== null) {
       const username = match[1];
-      const discriminator = match[2].substring(1);
+      const discriminator = match[2].substring(1); // Omit the hash
+      // Refactor user -> member "user" is incorrect
       const user = message.guild.members.find(member => member.user.username === username && member.user.discriminator === discriminator);
 
       if(user) {
         if(!user.dmChannel) {
-          user.createDM()
+          return user.createDM()
             .then(channel => {
-              channel.send(inactivityEmbed);
+              return channel.send(inactivityEmbed);
             })
-            .catch(err => console.error);
+            .catch(console.error);
         }
         else {
           const channelId = user.dmChannel;
-          resources.DiscordClient.channels.find(channel => channel.id === channelId)
-            .then(channel => {
-              channel.send(inactivityEmbed);
-            })
-            .catch(err => console.error);
+          return resources.DiscordClient.channels.find(channel => channel.id === channelId).send(inactivityEmbed)
+            .catch(console.error);
         }
+      }
+      else {
+        throw new Error(`Couldn't find that user.`);
       }
     }
     else {
-      message.channel.send(`Are you sure that was a valid username? Please include their tag (#1234) as well.`);
+      throw new Error(`Are you sure that was a valid username? Please include their tag (#1234) as well.`);
     }
   }
 };
-
-function sendDM(user, message) {
-  user.send(message);
-}

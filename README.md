@@ -32,6 +32,25 @@ Now you can enter your development environment by typing ``ve-develop`` (this is
 ## Installation
 1. Clone this repository ``git clone https://github.com/lowill/mustard-bot.git``
 2. ``cd mustard-bot && npm install``
-3. Create a file named ``config.json`` in the project's root directory.  Use ``config.json.template`` as a reference to populate its fields.
-4. Create a file named ``channels.json`` in the project's root directory.  Use ``channels.json.template`` as a reference to populate its fields.
-  ** Sorry, I currently have the following string literal 'salt-lobby' strewn throughout the project.  This a reference to a channelKey in ``channels.json`` and you will likely want to change that value.  I plan to refactor this.
+3. Create a file named ``config.json`` in the project's config directory.  Use ``config.json.template`` as a reference to populate its fields.
+4. Create a file named ``channels.json`` in the project's config directory.  Use ``channels.json.template`` as a reference to populate its fields.
+
+
+## Notes:
+
+### config.json
+
+1. If you want to use the Twitter commands you will need to authenticate with Twitter.
+You should generate a set of Twitter oauth tokens and a [bearer token](https://www.npmjs.com/package/get-twitter-bearer-token) and add those to your ``config.json``.
+2. ``config.json`` also contains a set of channel keys (channelKeys) which refer to the keys in channels.json.  Use of the following keys is recommended.
+```
+  "channelKeys": {
+    "test": "test",
+    "main": "main",
+    "admin": "admin"
+  }
+```
+
+### channels.json
+
+I wanted there to be a static listing for any channels you want to reference.  This is because channel names can change very frequently and it can be difficult to find reference to them later.
