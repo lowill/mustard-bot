@@ -47,23 +47,32 @@ module.exports = {
           return;
         }
         if(usersInactiveLogged.length > 0) {
-          // TODO: Get the usernames and discriminators programmatically...
-          const inactiveUser = {
-            username: undefined,
-            discriminator: undefined
-          }
+
+          const usersInactiveLoggedIds = usersInactiveLogged.map(user => {
+            return user.user_id;
+          });
+
+          const inactiveMembers = message.guild.members.filter(member => {
+            return !member.user.bot && usersInactiveLoggedIds.includes(member.id);
+          });
+
           const embed = new Discord.RichEmbed()
             .setColor(Constants.mustardColorCode)
             .setTitle(`Inactive Users (${days} days)`);
-          res.forEach(row => {
-            const lastSeenDate = moment(row.last_active);
+
+          inactiveMembers.forEach(inactiveMember => {
+            const lastSeenTimestamp = usersInactiveLogged.find(user => user.user_id === inactiveMember.id).last_active;
+            const lastSeenDate = moment(lastSeenTimestamp);
             const lastSeenFormatted = lastSeenDate.tz('Asia/Tokyo').format('YYYY-MM-DD HH:mm:ss (zZ)');
             const daysSince = currentMoment.diff(lastSeenDate, 'days');
-            embed.addField(`${inactiveUser.username}#${inactiveUser.discriminator}`, `Last seen: ${lastSeenFormatted}, ${daysSince} days ago`);
+            embed.addField(`${inactiveMember.user.username}#${inactiveMember.user.discriminator}`, `Last seen: ${lastSeenFormatted}, ${daysSince} days ago`);
           });
+
           message.channel.send(``, embed);
+
         }
         if(membersWithoutLogs.size > 0) {
+
           const membersWithoutLogsFormatted = membersWithoutLogs.map(member => {
             return '``' + `${member.user.username}#${member.user.discriminator}` + '``'
           })
@@ -75,6 +84,7 @@ module.exports = {
             .setDescription(`The following users have not participated since this database was created: ${membersWithoutLogsFormatted}`)
 
           message.channel.send(``, embed);
+
         }
 
 
