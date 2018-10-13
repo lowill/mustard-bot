@@ -234,7 +234,12 @@ client.on('message', message => {
     const timestamp = message.createdTimestamp;
     DB.run(`
       INSERT OR REPLACE
-      INTO user_activity
+      INTO user_activity (
+        user_id,
+        username,
+        discriminator,
+        last_active
+      )
       VALUES (
         "${message.author.id}",
         "${message.author.username}",
