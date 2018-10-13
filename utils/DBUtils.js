@@ -6,9 +6,9 @@ class Connection {
     this.db = new sqlite.Database(dbname);
   }
 
-  run(sql, args) {
+  run(sql, params) {
     return new Promise((resolve, reject) => {
-      this.db.run(sql, args, (err) => {
+      this.db.run(sql, params, (err) => {
         if(err === null) {
           resolve();
         }
@@ -19,9 +19,9 @@ class Connection {
     });
   }
 
-  get(sql, args) {
+  get(sql, params) {
     return new Promise((resolve, reject) => {
-      this.db.get(sql, args, (err, row) => {
+      this.db.get(sql, params, (err, row) => {
         if(err === null) {
           resolve(row);
         }
@@ -32,9 +32,9 @@ class Connection {
     });
   }
 
-  all(sql, args) {
+  all(sql, params) {
     return new Promise((resolve, reject) => {
-      this.db.all(sql, args, (err, rows) => {
+      this.db.all(sql, params, (err, rows) => {
         if(err === null) {
           resolve(rows);
         }
