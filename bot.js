@@ -237,10 +237,13 @@ client.on('message', message => {
         last_active
       )
       VALUES (
-        "${message.author.id}",
-        ${timestamp}
+        $id,
+        $last_active
       )
-    `)
+    `, {
+      $id: message.author.id,
+      $last_active: timestamp 
+    })
       .catch(console.error);
   }
 
