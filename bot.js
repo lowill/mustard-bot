@@ -20,6 +20,9 @@ const client = new Discord.Client();
 const DiscordUtils = require('@utils/DiscordUtils.js')(client);
 client.commands = new Discord.Collection();
 
+const DBUtils = require('@utils/DBUtils.js');
+const DB = new DBUtils.Connection(Config.db_filename);
+
 // cmd args
 const argv = require('minimist')(process.argv.slice(2));
 const testMode = argv['test'] ? true : false;
@@ -27,7 +30,8 @@ const testMode = argv['test'] ? true : false;
 // this object makes our connection resources available across the app 
 const resources = {
   DiscordClient: client,
-  Jimp: Jimp
+  Jimp: Jimp,
+  DB: DB
 };
 
 // initialize commands
@@ -134,12 +138,12 @@ client.commands.set(`salt`, {
       const authorPermission = DiscordUtils.getHighestPermissionForUser(ennui);
       const eligiblePermissions = DiscordUtils.getEligiblePermissions(authorPermission);
       console.log(authorPermission, eligiblePermissions);
+
+      const bob = message.guild.members.get('398275171775021058');
+      console.log(DiscordUtils.hasPermission(bob, message.guild, client.commands.get('say')));
     }
     catch(err) {
       console.error(err);
-    }
-    finally {
-      message.delete();      
     }
   }
 })
@@ -147,6 +151,7 @@ client.commands.set(`salt`, {
 
 // Event handling
 // Startup tasks
+client.isReady = false;
 client.on('ready', () => {
   console.log('Client is ready.');
 
@@ -188,8 +193,6 @@ client.on('ready', () => {
     }, 1000 * 60 * 60);
   });
 
-  console.log(`${moment().format(Constants.loggingFormat)} Completed initialization tasks`);
-
   // create Twitter client
   const TwitterClient = new Twitter({
     consumer_key: Config.twitter_keys.consumer_key,
@@ -198,12 +201,50 @@ client.on('ready', () => {
   });
   resources.TwitterClient = TwitterClient;
 
+  // Setup user activity table
+  DB.run(`
+    CREATE TABLE 
+    IF NOT EXISTS user_activity 
+    (
+      user_id TEXT PRIMARY KEY,
+      username TEXT,
+      discriminator INTEGER,
+      last_active INTEGER
+    )
+  `)
+    .then(() => {
+      return DB.all(`SELECT * FROM user_activity`);
+    })
+    .catch(console.error);
+
   // Set the status text
   client.user.setPresence({ game: { name: `Say ~help for commands list` }, status: 'online' })
     .catch(console.error);
+
+  console.log(`${moment().format(Constants.loggingFormat)} Completed initialization tasks`);
+  client.isReady = true;
 });
 
 client.on('message', message => {
+  // Disallow any commands until our initialization tasks are completed.
+  if(client.isReady !== true) return;
+
+  // Store the last timestamp each user sent a message to determine inactivity (get-inactive command)
+  if(message.author.bot === false) {
+    const timestamp = message.createdTimestamp;
+    DB.run(`
+      INSERT OR REPLACE
+      INTO user_activity
+      VALUES (
+        "${message.author.id}",
+        "${message.author.username}",
+        ${message.author.discriminator},
+        ${timestamp}
+      )
+    `)
+      .catch(console.error);
+  }
+
   // Ignore messages not relevant to this bot
   // TODO: Refactor to allow comparing messages against self later, for testing purposes.
   if (!message.content.startsWith(Config.prefix) || message.author.bot) return;
@@ -219,13 +260,22 @@ client.on('message', message => {
   try {
     const commandObj = client.commands.get(command);
     // Check that user has required permissions
-    if(DiscordUtils.hasPermission(message.author, commandObj)) {
+    if(DiscordUtils.hasPermission(message.author, message.guild, commandObj)) {
       commandObj.execute(message, args, resources);
+    }
+    else {
+      console.error(`${message.author.name} tried to use command without permission:`, message.content);
     }
   }
   catch(error) {
     console.error(error);
     message.reply('Sorry, something went wrong.');
+  }
+  finally {
+    // just remove messages
+    if(testMode === true) {
+      message.delete();
+    }
   }
 });
 

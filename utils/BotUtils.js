@@ -8,8 +8,8 @@ function getPermissionLevel(permissionStr) {
     .find(permission => permission.name === permissionStr);
 
   let permissionLevel = null;
-  if(permission !== undefined) {
-    permissionLevel = permissionObj.permissionLevel
+  if(permissionObj !== undefined) {
+    permissionLevel = permissionObj.permissionLevel;
   }
 
   return permissionLevel;

@@ -16,12 +16,14 @@ function DiscordUtils(discordClient) {
     },
 
     // used to determine if the user has permission to use the command
-    hasPermission(user, command) {
+    hasPermission(user, guild, command) {
       // trivial case, no permissions set
       if(command.permissions === undefined || command.permissions === null) return true;
 
       const permissionRequired = BotUtils.getPermissionLevel(command.permissions);
       const permittedRoles = Permissions.filter(role => role.permissionLevel <= permissionRequired);
+
+      const userRoles = guild.members.get(user.id).roles;
 
       let hasPermission = false;
 
@@ -29,11 +31,15 @@ function DiscordUtils(discordClient) {
       for(let role of permittedRoles) {
         if(role.roleIds !== undefined) {
           for(let id of role.roleIds) {
-            if(user.roles !== undefined && user.roles.has(id)) {
+            if(userRoles !== undefined && userRoles.has(id)) {
               hasPermission = true;
               break;
             }
           }
+        }
+        // Owner case
+        else if(role.userId !== undefined && user.id === role.userId) {
+          hasPermission = true;
         }
         if(hasPermission) break;
       }
