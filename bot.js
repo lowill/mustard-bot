@@ -264,7 +264,7 @@ client.on('message', message => {
       commandObj.execute(message, args, resources);
     }
     else {
-      console.error(`${message.author.name} tried to use command without permission:`, message.content);
+      console.error(`${message.author.username} tried to use command without permission:`, message.content);
     }
   }
   catch(error) {
