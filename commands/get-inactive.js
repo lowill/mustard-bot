@@ -47,6 +47,11 @@ module.exports = {
           return;
         }
         if(usersInactiveLogged.length > 0) {
+          // TODO: Get the usernames and discriminators programmatically...
+          const inactiveUser = {
+            username: undefined,
+            discriminator: undefined
+          }
           const embed = new Discord.RichEmbed()
             .setColor(Constants.mustardColorCode)
             .setTitle(`Inactive Users (${days} days)`);
@@ -54,7 +59,7 @@ module.exports = {
             const lastSeenDate = moment(row.last_active);
             const lastSeenFormatted = lastSeenDate.tz('Asia/Tokyo').format('YYYY-MM-DD HH:mm:ss (zZ)');
             const daysSince = currentMoment.diff(lastSeenDate, 'days');
-            embed.addField(`${row.username}#${row.discriminator}`, `Last seen: ${lastSeenFormatted}, ${daysSince} days ago`);
+            embed.addField(`${inactiveUser.username}#${inactiveUser.discriminator}`, `Last seen: ${lastSeenFormatted}, ${daysSince} days ago`);
           });
           message.channel.send(``, embed);
         }

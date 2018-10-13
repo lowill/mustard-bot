@@ -207,8 +207,6 @@ client.on('ready', () => {
     IF NOT EXISTS user_activity 
     (
       user_id TEXT PRIMARY KEY,
-      username TEXT,
-      discriminator TEXT,
       last_active INTEGER
     )
   `)
@@ -236,14 +234,10 @@ client.on('message', message => {
       INSERT OR REPLACE
       INTO user_activity (
         user_id,
-        username,
-        discriminator,
         last_active
       )
       VALUES (
         "${message.author.id}",
-        "${message.author.username}",
-        "${message.author.discriminator}",
         ${timestamp}
       )
     `)
