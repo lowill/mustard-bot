@@ -1,4 +1,4 @@
-const assert = require('assert');
+const assert = require('chai').assert;
 const Ssg = require('@commands/ssg.js');
 
 const { prefix } = require('@config/config.json');
@@ -33,7 +33,7 @@ describe('ssg module', () => {
       await Ssg.execute(fakeMessagePassing, null, { Jimp: fakeJimp })
         .then(resolution => resolved = true, err => console.error(err))
         .catch(console.error);
-      assert.equal(resolved, true);
+      assert.strictEqual(resolved, true);
     });
 
     it('should throw an error if the name was empty or undefined', async () => {
@@ -41,7 +41,7 @@ describe('ssg module', () => {
       await Ssg.execute(fakeMessage, null, { Jimp: fakeJimp })
         .catch(err => {threwError = true});
 
-      assert.equal(threwError, true);
+      assert.strictEqual(threwError, true);
     });
 
   });

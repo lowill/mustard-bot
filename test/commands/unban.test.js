@@ -1,6 +1,6 @@
 require('module-alias/register');
 
-const assert = require('assert');
+const assert = require('chai').assert;
 const Unban = require('@commands/unban.js');
 
 describe('unban module', () => {
@@ -30,7 +30,7 @@ describe('unban module', () => {
   describe('execute method', () => {
     it('should return true if the user was banned', async () => {
       const actual = await Unban.execute(fakeDiscordMessage, ['9999999999999999']);
-      assert.equal(actual, true);
+      assert.strictEqual(actual, true);
     });
 
     // Couldn't get this to work with assert.rejects.  Instead just getting a boolean value and doing the assertion outside async
@@ -44,7 +44,7 @@ describe('unban module', () => {
           rejected = true;
         })
         .catch(() => {rejected = false});
-      assert.equal(rejected, true);
+      assert.strictEqual(rejected, true);
     });
 
   });

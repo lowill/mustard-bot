@@ -1,6 +1,6 @@
 require('module-alias/register');
 
-const assert = require('assert');
+const assert = require('chai').assert;
 
 const { prefix } = require('@config/config.json');
 const Say = require('@commands/say.js');
@@ -20,7 +20,7 @@ describe('Say module', function() {
   describe('execute method', function() {
     it('should send a message via the fake client without the first four characters', function() {
       const actual = Say.execute(fakeMessage, [], fakeResources);
-      assert.equal(actual, 'hello world!');
+      assert.strictEqual(actual, 'hello world!');
     });    
   });
 });

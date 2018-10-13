@@ -1,6 +1,6 @@
 require('module-alias/register');
 
-const assert = require('assert');
+const assert = require('chai').assert;
 const RecurringJobs = require('@jobs/RecurringJobs.js');
 
 describe('Recurring Jobs', function() {
@@ -8,7 +8,7 @@ describe('Recurring Jobs', function() {
   describe('recurrenceRuleToCronFormat', function() {
     it('should populate a string with default values if the argument object is empty', function() {
       const cronFormat = RecurringJobs.recurrenceRuleToCronFormat({});
-      assert.equal(cronFormat, '0 * * * * *');
+      assert.strictEqual(cronFormat, '0 * * * * *');
     });
     it('should populate values as expected', function() {
       const testData = {
@@ -20,7 +20,7 @@ describe('Recurring Jobs', function() {
         dayOfWeek: 6
       };
       const cronFormat = RecurringJobs.recurrenceRuleToCronFormat(testData);
-      assert.equal(cronFormat, '1 2 3 4 5 6');
+      assert.strictEqual(cronFormat, '1 2 3 4 5 6');
     });
   });
 
