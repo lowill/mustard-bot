@@ -2,7 +2,7 @@ const sqlite = require('sqlite3').verbose();
 
 class Connection {
 
-  constructor(dbname='mustard_bot') {
+  constructor(dbname='mustard_bot.sqlite') {
     this.db = new sqlite.Database(dbname);
   }
 

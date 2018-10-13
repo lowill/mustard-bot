@@ -208,7 +208,7 @@ client.on('ready', () => {
     (
       user_id TEXT PRIMARY KEY,
       username TEXT,
-      discriminator INTEGER,
+      discriminator TEXT,
       last_active INTEGER
     )
   `)
@@ -243,7 +243,7 @@ client.on('message', message => {
       VALUES (
         "${message.author.id}",
         "${message.author.username}",
-        ${message.author.discriminator},
+        "${message.author.discriminator}",
         ${timestamp}
       )
     `)

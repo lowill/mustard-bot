@@ -10,13 +10,13 @@ describe('get-inactive module', () => {
       { 
         user_id: '161221472495468540',
         username: 'KrazyMustard',
-        discriminator: 8501,
+        discriminator: '8501',
         last_active: 1539320956106
       },
       {
         user_id: '56122147249546854',
         username: 'InactiveUser',
-        discriminator: 1111,
+        discriminator: '1111',
         last_active: 1537753063300
       }
     ];
