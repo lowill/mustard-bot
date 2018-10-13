@@ -58,7 +58,9 @@ module.exports = {
 
           const embed = new Discord.RichEmbed()
             .setColor(Constants.mustardColorCode)
-            .setTitle(`Inactive Users (${days} days)`);
+            .setTitle(`Inactive Users`)
+            .setDescription(`Users who have been inactive for ${days} days.`)
+            .setFooter(`Total ${usersInactiveLogged.length} users`);
 
           inactiveMembers.forEach(inactiveMember => {
             const lastSeenTimestamp = usersInactiveLogged.find(user => user.user_id === inactiveMember.id).last_active;
@@ -82,6 +84,7 @@ module.exports = {
             .setColor(Constants.mustardColorCode)
             .setTitle(`Users with no logged activity`)
             .setDescription(`The following users have not participated since this database was created: ${membersWithoutLogsFormatted}`)
+            .setFooter(`Total ${membersWithoutLogs.size} users`);
 
           message.channel.send(``, embed);
 
