@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const moment = require('moment-timezone');
-const Constants = require('@constants/constants.js');
+const Constants = require('@constants/Constants.js');
 const DEFAULT_THRESHOLD = 14;
 
 module.exports = {
