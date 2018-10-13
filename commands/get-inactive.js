@@ -2,10 +2,11 @@ const Discord = require('discord.js');
 const moment = require('moment-timezone');
 const Constants = require('@constants/Constants.js');
 const DEFAULT_THRESHOLD = 14;
+const { prefix } = require('@config/config.json');
 
 module.exports = {
   name: 'get-inactive',
-  description: `Assembles a list of users who have not participated in chat for the specified number of days (default 14).`,
+  description: `Assembles a list of users who have not participated in chat for the specified number of days (default 14). Usage: \`\`${prefix}${this.name} [days:integer]\`\``,
   permissions: `officer`,
   execute(message, args, resources) {
     const arg = args.shift();
