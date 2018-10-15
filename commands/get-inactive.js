@@ -69,7 +69,7 @@ module.exports = {
           const embedArgs = {
             createEmbed: () => new Discord.RichEmbed().setColor(Constants.mustardColorCode).setTitle(`Inactive Users cont'd`),
             firstEmbed: embed => embed.setTitle(`Inactive Users`).setDescription(`Users who have been inactive for at least ${days} days.`),
-            lastEmbed: embed => embed.setFooter(`Total ${inactiveMembers.length} users`)
+            lastEmbed: embed => embed.setFooter(`Total ${inactiveMembers.size} users`)
           };
 
           DiscordUtils.sendEmbeds(message, Array.from(inactiveMembers.values()), addField, embedArgs)
