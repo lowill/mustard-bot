@@ -131,16 +131,26 @@ client.commands.set(`salt`, {
   description: '',
   execute(message, args) {
     try {
-      // const coyy = message.guild.owner;
-      const ennui = message.guild.members.get('214735371488067584');
-      // console.log(message.guild.members.find(member => member.user.id === 245762653312516097));
-
-      const authorPermission = DiscordUtils.getHighestPermissionForUser(ennui);
-      const eligiblePermissions = DiscordUtils.getEligiblePermissions(authorPermission);
-      console.log(authorPermission, eligiblePermissions);
-
-      const bob = message.guild.members.get('398275171775021058');
-      console.log(DiscordUtils.hasPermission(bob, message.guild, client.commands.get('say')));
+      // client.commands.get('get-inactive').execute(message, ['3'], resources);
+      DB.all(`
+        SELECT *
+        FROM user_activity
+      `).then(res => {
+          const userIds = res.map(row => row.user_id);
+          const users = message.guild.members.map(member => {
+            if(userIds.includes(member.user.id)) {
+              return {
+                id: member.user.id,
+                username: member.user.username,
+                last_active: moment(res.find(item => item.user_id === member.user.id).last_active).format()
+              }
+            }
+            else return null;
+          }).filter(item => item !== null);
+          console.log(users);
+        })
+        .catch(console.error);
+      console.log()      
     }
     catch(err) {
       console.error(err);
