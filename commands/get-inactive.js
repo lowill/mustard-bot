@@ -22,7 +22,7 @@ module.exports = {
     else throw new Error(`Days inactive must be a positive integer.`);
 
     const currentMoment = moment();
-    const thresholdTimestamp = currentMoment.subtract(days, 'days').valueOf();
+    const thresholdTimestamp = currentMoment.clone().subtract(days, 'days').valueOf();
 
     // WHERE last_active < ${thresholdTimestamp}
     const inactiveUsers = resources.DB.all(`
@@ -38,7 +38,7 @@ module.exports = {
         const usersInactiveLogged = res.filter(row => {
           const daysSince = currentMoment.diff(row.last_active, 'days');
           // console.log(`${daysSince} days/${days} :: ${moment(row.last_active).format()} :: ${currentMoment.format()}`);
-          return daysSince >= 0;
+          return daysSince > days;
         });
 
         const usersInactive = usersInactiveLogged.length + membersWithoutLogs.size;
