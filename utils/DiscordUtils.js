@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const Permissions = require('@config/Permissions.json');
 const BotUtils = require('./BotUtils.js');
+const Utils = require('./Utils.js');
 
 // Group functions in this file into a single object curried with the Discord Client
 function DiscordUtils(discordClient) {
@@ -83,7 +84,44 @@ function DiscordUtils(discordClient) {
       if(idMatch !== null) {
         result = discordClient.fetchUser(identifier);
       }
+    },
+
+    // You can add a max of 25 fields to an embed.
+    // This method will break your data out into sets of 25 to send multiple embeds
+    sendEmbeds(message, data, addField, args) {
+      const {
+        createEmbed,
+        firstEmbed,
+        lastEmbed
+      } = args;
+
+      const dataChunks = Utils.arrayDivide(data, 25);
+
+      const messagePromises = [];
+
+      const embedGenerator = (function* () {
+        const newEmbed = () => typeof createEmbed === 'function' ? createEmbed() : new Discord.RichEmbed();
+        let embed = newEmbed();
+        yield typeof firstEmbed === 'function' ? firstEmbed(embed) : embed;
+
+        const dataChunkIterator = dataChunks[Symbol.iterator]();
+        let chunk;
+        do {
+          chunk = dataChunkIterator.next();
+          embed = newEmbed();
+          yield typeof lastEmbed === 'function' ? lastEmbed(embed) : embed;
+        } while( chunk.done === false );
+      }(dataChunks));
+
+      dataChunks.forEach(chunk => {
+        const embed = embedGenerator.next().value;
+        chunk.forEach(datum => addField(embed, datum));
+        messagePromises.push(message.channel.send(``, embed));
+      });
+
+      return Promise.all(messagePromises);
     }
+
   }
 };
 

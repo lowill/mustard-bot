@@ -4,6 +4,8 @@ const Constants = require('@constants/Constants.js');
 const DEFAULT_THRESHOLD = 14;
 const { prefix } = require('@config/config.json');
 
+const DiscordUtils = require('@utils/DiscordUtils.js')({});
+
 module.exports = {
   name: 'get-inactive',
   description: `Assembles a list of users who have not participated in chat for the specified number of days (default 14). Usage: \`\`${prefix}get-inactive [days:integer]\`\``,
@@ -56,22 +58,22 @@ module.exports = {
             return !member.user.bot && usersInactiveLoggedIds.includes(member.id);
           });
 
-          const embed = new Discord.RichEmbed()
-            .setColor(Constants.mustardColorCode)
-            .setTitle(`Inactive Users`)
-            .setDescription(`Users who have been inactive for ${days} days.`)
-            .setFooter(`Total ${usersInactiveLogged.length} users`);
-
-          inactiveMembers.forEach(inactiveMember => {
-            const lastSeenTimestamp = usersInactiveLogged.find(user => user.user_id === inactiveMember.id).last_active;
+          const addField = (embed, inactiveMember) => {
+            const lastSeenTimestamp = usersInactiveLogged.find(user => user.user_id === inactiveMember.user.id).last_active;
             const lastSeenDate = moment(lastSeenTimestamp);
-            const lastSeenFormatted = lastSeenDate.tz('Asia/Tokyo').format('YYYY-MM-DD HH:mm:ss (zZ)');
+            // const lastSeenFormatted = lastSeenDate.tz('Asia/Tokyo').format('MM-DD');
             const daysSince = currentMoment.diff(lastSeenDate, 'days');
-            embed.addField(`${inactiveMember.user.username}#${inactiveMember.user.discriminator}`, `Last seen: ${lastSeenFormatted}, ${daysSince} days ago`);
-          });
+            embed.addField(`${inactiveMember.user.username}#${inactiveMember.user.discriminator}`, `${daysSince} days ago`, true);
+          };
 
-          message.channel.send(``, embed);
+          const embedArgs = {
+            createEmbed: () => new Discord.RichEmbed().setColor(Constants.mustardColorCode).setTitle(`Inactive Users cont'd`),
+            firstEmbed: embed => embed.setTitle(`Inactive Users`).setDescription(`Users who have been inactive for at least ${days} days.`),
+            lastEmbed: embed => embed.setFooter(`Total ${inactiveMembers.length} users`)
+          };
 
+          DiscordUtils.sendEmbeds(message, Array.from(inactiveMembers.values()), addField, embedArgs)
+            .catch(console.error);
         }
         if(membersWithoutLogs.size > 0) {
 
