@@ -2,7 +2,7 @@ require('module-alias/register');
 const ArrayDivide = require('@utils/Utils.js').arrayDivide;
 const assert = require('chai').assert;
 
-describe.only('Utils module', () => {
+describe('Utils module', () => {
   describe('arrayDivide method', () => {
     it('should divide a simple array in two', () => {
       const array = [0, 1, 2, 3, 4, 5];
