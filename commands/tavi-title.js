@@ -4,6 +4,7 @@
  **/
 const { prefix } = require('@config/config.json');
 const Utils = require('@utils/Utils.js');
+const DiscordUtils = require('@utils/DiscordUtils.js')({});
 // const DBUtils = require('@commands/DBUtils');
 
 // Track a list of tables that have been initialized so we only need to run that query once per bot instance
@@ -121,7 +122,7 @@ module.exports = {
     })
     .then(res => {
       const title = constructTitle(name, res);
-      return message.channel.send(title);
+      return DiscordUtils.sendLongMessage(message, title);
     })
     .catch(console.error);
   }
