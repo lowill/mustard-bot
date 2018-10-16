@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const Permissions = require('@config/Permissions.json');
+const Constants = require('@constants/Constants.js');
 const BotUtils = require('./BotUtils.js');
 const Utils = require('./Utils.js');
 
@@ -120,6 +121,12 @@ function DiscordUtils(discordClient) {
       });
 
       return Promise.all(messagePromises);
+    },
+
+    // There is a 2000 character limit for sending messages on Discord
+    sendLongMessage(sourceMessage, messageToSend) {
+      const messageChunks = Utils.stringDivide(messageToSend, Constants.messageCharacterLimit);
+      return Promise.all(messageChunks.map(chunk => sourceMessage.channel.send(chunk)));
     }
 
   }
