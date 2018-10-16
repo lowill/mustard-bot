@@ -2,6 +2,7 @@ require('module-alias/register');
 const Utils = require('@utils/Utils.js');
 const ArrayDivide = Utils.arrayDivide;
 const LogicalXOR = Utils.logicalXOR;
+const StringDivide = Utils.stringDivide;
 const assert = require('chai').assert;
 
 describe('Utils module', () => {
@@ -99,6 +100,43 @@ describe('Utils module', () => {
       const expected = false;
 
       assert.strictEqual(actual, expected);
+    });
+
+  });
+
+  describe('stringDivide method', () => {
+    it(`should divide a string into multiple`, () => {
+      const testStr = 'this is a test string';
+      const testSize = 5;
+      const actual = StringDivide(testStr, testSize);
+      const expected = ['this ', 'is a ', 'test ', 'strin', 'g'];
+
+      assert.strictEqual(JSON.stringify(actual), JSON.stringify(expected));
+    });
+
+    it(`should work even if the string size was longer`, () => {
+      const testStr = 'this is a test string';
+      const testSize = 100;
+      const actual = StringDivide(testStr, testSize);
+      const expected = ['this is a test string'];
+
+      assert.strictEqual(JSON.stringify(actual), JSON.stringify(expected));
+    });
+
+    it(`should throw an error if str wasn't a string`, () => {
+      assert.throws(() => StringDivide(undefined, 5));
+    });
+
+    it(`should throw an error if strSize wasn't a number`, () => {
+      assert.throws(() => StringDivide('this is a string', undefined));
+    });
+
+    it(`should throw an error if strSize was null`, () => {
+      assert.throws(() => StringDivide('this is a string', null));
+    });
+
+    it(`should throw an error if strSize wasn't a positive integer`, () => {
+      assert.throws(() => StringDivide('this is a string', -0.1));
     });
 
   });
