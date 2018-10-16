@@ -1,6 +1,6 @@
 {
   "name": "mustard-bot",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Salt and Pepper helper",
   "main": "bot.js",
   "author": "Will",
@@ -24,7 +24,8 @@
   },
   "scripts": {
     "start": "node bot.js",
-    "test": "mocha --recursive --watch"
+    "test": "mocha --recursive --watch",
+    "quiet": "node bot.js --test"
   },
   "_moduleAliases": {
     "@root": ".",
