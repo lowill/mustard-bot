@@ -21,5 +21,10 @@ function arrayDivide(arr, arrSize) {
   return result;
 }
 
+function logicalXOR(a, b) {
+  return (a || b) && !(a && b);
+}
+
 module.exports.objectDeepClone = objectDeepClone;
 module.exports.arrayDivide = arrayDivide;
+module.exports.logicalXOR = logicalXOR;

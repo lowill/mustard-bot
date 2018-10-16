@@ -1,5 +1,7 @@
 require('module-alias/register');
-const ArrayDivide = require('@utils/Utils.js').arrayDivide;
+const Utils = require('@utils/Utils.js');
+const ArrayDivide = Utils.arrayDivide;
+const LogicalXOR = Utils.logicalXOR;
 const assert = require('chai').assert;
 
 describe('Utils module', () => {
@@ -55,5 +57,49 @@ describe('Utils module', () => {
     it('should throw an error if a nonNumber array size is passed', () => {
       assert.throws(() => ArrayDivide([], 'foo'));
     })
+  });
+
+  describe('logicalXOR method', () => {
+
+    it('should return true if a is true and b is false', () => {
+      const a = true;
+      const b = false;
+
+      const actual = LogicalXOR(a, b);
+      const expected = true;
+
+      assert.strictEqual(actual, expected);
+    });
+
+    it('should return true if a is false and b is true', () => {
+      const a = false;
+      const b = true;
+
+      const actual = LogicalXOR(a, b);
+      const expected = true;
+
+      assert.strictEqual(actual, expected);
+    });
+
+    it('should return false if both a and b are true', () => {
+      const a = true;
+      const b = true;
+
+      const actual = LogicalXOR(a, b);
+      const expected = false;
+
+      assert.strictEqual(actual, expected);
+    });
+
+    it('should return false if both a and b are false', () => {
+      const a = false;
+      const b = false;
+
+      const actual = LogicalXOR(a, b);
+      const expected = false;
+
+      assert.strictEqual(actual, expected);
+    });
+
   });
 });
