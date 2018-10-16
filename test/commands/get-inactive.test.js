@@ -65,7 +65,7 @@ describe('get-inactive module', () => {
       sendMessage.resetHistory();
     }); 
 
-    it.skip('should send a message containing a list of inactive users if there were any (14 days) and there were none without logged activity', async () => {
+    it('should send a message containing a list of inactive users if there were any (14 days) and there were none without logged activity', async () => {
       membersFilter.returns(emptyMemberSet);
       await GetInactive.execute(fakeMessage, [], fakeResources);
       assert(sendMessage.calledOnce);
