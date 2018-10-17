@@ -14,7 +14,7 @@ module.exports = {
   jobFunction: messageFn => {
     return messageFn(`@here It's tootin' time!`, {
       files: [{
-        attachment: './images/toot.png',
+        attachment: './images/hallotoot.png',
         name: 'toot.png'
       }]
     });

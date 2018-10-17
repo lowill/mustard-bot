@@ -14,7 +14,7 @@ module.exports = {
   jobFunction: messageFn => {
     return messageFn(`Last call for toots!`, {
       files: [{
-        attachment: './images/mimlemel2.png',
+        attachment: './images/mimlemel_halloween_2.png',
         name: 'mimlemel2.png'
       }]
     });
