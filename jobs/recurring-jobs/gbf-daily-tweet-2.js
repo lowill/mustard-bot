@@ -1,4 +1,12 @@
+const fs = require('fs');
+const Discord = require('discord.js');
 const { channelKeys } = require('@config/config.json');
+
+const imagePath = './images/mimlemel_halloween_2.png';
+if(!fs.existsSync(imagePath)) {
+  throw new Error(`File not found at ${imagePath}`);
+}
+const imageAttachment = new Discord.Attachment(imagePath);
 
 module.exports = {
   name: 'daily-twitter-refresh-reminder-2',
@@ -12,11 +20,6 @@ module.exports = {
     channelKey: channelKeys.main
   },
   jobFunction: messageFn => {
-    return messageFn(`Last call for toots!`, {
-      files: [{
-        attachment: './images/mimlemel_halloween_2.png',
-        name: 'mimlemel2.png'
-      }]
-    });
+    return messageFn(`Last call for toots!`, imageAttachment);
   }
 };
