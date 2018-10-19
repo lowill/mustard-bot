@@ -292,7 +292,7 @@ client.on('message', message => {
   }
   catch(error) {
     console.error(error);
-    message.reply(error);
+    message.reply(error.message);
   }
   finally {
     // just remove messages
