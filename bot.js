@@ -131,6 +131,7 @@ client.commands.set(`salt`, {
   description: '',
   execute(message, args) {
     try {
+      console.log(args);
       // client.commands.get('get-inactive').execute(message, ['3'], resources);
       DB.all(`
         SELECT *
@@ -147,13 +148,17 @@ client.commands.set(`salt`, {
             }
             else return null;
           }).filter(item => item !== null);
-          console.log(users);
+          // console.log(users);
+
         })
         .catch(console.error);
-      console.log()      
+
     }
     catch(err) {
       console.error(err);
+    }
+    finally {
+      if(!testMode) message.delete();
     }
   }
 })
@@ -266,7 +271,13 @@ client.on('message', message => {
   const command = args.shift().toLowerCase();
 
   // Ignore any commands that don't exist
-  if(!client.commands.has(command)) return;
+  if(!client.commands.has(command)) {
+    const emojiIds = ['372318649366740994', '370590162033442828', '385750068667482112'];
+    const randomEmojiId = emojiIds[Math.floor(Math.random()*emojiIds.length)];
+    const emoji = message.guild.emojis.get(randomEmojiId) || '🤔';
+    message.react(emoji);
+    return;
+  }
 
   // Safe command execution
   try {
@@ -281,7 +292,7 @@ client.on('message', message => {
   }
   catch(error) {
     console.error(error);
-    message.reply('Sorry, something went wrong.');
+    message.reply(error);
   }
   finally {
     // just remove messages
