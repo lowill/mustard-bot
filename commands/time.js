@@ -12,7 +12,7 @@ module.exports = {
     if(timezone === undefined || timezone === '') {
       timezone = 'Asia/Tokyo';
     }
-    else if(!moment.tz.names().includes(timezone)) throw new Error(`Invalid timezone.  Please use a full format timezone like \`\`"Asia/Tokyo"\`\` or \`\`"America/New_York"\`\`  See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for a complete list of timezones.`);
+    else if(!moment.tz.names().includes(timezone)) throw new Error(`Invalid timezone.  Please use a full format timezone like \`\`"Asia/Tokyo"\`\` or \`\`"America/New_York"\`\`  See <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones> for a complete list of timezones.`);
     const targetTime = moment().tz(timezone).format(timeFormat);
     return message.channel.send(targetTime);
   }
