@@ -20,6 +20,6 @@ module.exports = {
     channelKey: channelKeys.main
   },
   jobFunction: messageFn => {
-    return messageFn(`@here It's tootin' time!`, imageAttachment);
+    return messageFn(`@here <@&505844562737102848> It's tootin' time!`, imageAttachment);
   }
 };

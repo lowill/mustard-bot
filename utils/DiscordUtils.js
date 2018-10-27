@@ -25,13 +25,12 @@ function DiscordUtils(discordClient) {
       const permissionRequired = BotUtils.getPermissionLevel(command.permissions);
       const permittedRoles = Permissions.filter(role => role.permissionLevel <= permissionRequired);
 
-      const userRoles = guild.members.get(user.id).roles;
-
       let hasPermission = false;
-
+      // If guild is null, we can assign null to this value
+      const userRoles = guild !== null ? guild.members.get(user.id).roles : null;
       // PermittedRoles has an array of roleIds
       for(let role of permittedRoles) {
-        if(role.roleIds !== undefined) {
+        if(guild !== null && role.roleIds !== undefined) {
           for(let id of role.roleIds) {
             if(userRoles !== undefined && userRoles.has(id)) {
               hasPermission = true;

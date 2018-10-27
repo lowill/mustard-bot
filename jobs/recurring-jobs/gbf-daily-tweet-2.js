@@ -20,6 +20,6 @@ module.exports = {
     channelKey: channelKeys.main
   },
   jobFunction: messageFn => {
-    return messageFn(`Last call for toots!`, imageAttachment);
+    return messageFn(`<@&505844562737102848> Last call for toots!`, imageAttachment);
   }
 };
