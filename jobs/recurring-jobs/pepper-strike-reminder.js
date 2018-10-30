@@ -1,9 +1,9 @@
 const { channelKeys } = require('@config/config.json');
 
 module.exports = {
-  name: 'salt-strike-time-reminder',
+  name: 'pepper-strike-time-reminder',
   recurrenceRule: {
-    hour: [23, 10],
+    hour: [22, 10],
     minute: 0,
     tz: 'Asia/Tokyo'
   },
@@ -12,6 +12,6 @@ module.exports = {
     'channelKey': channelKeys.main
   },
   jobFunction: messageFn => {
-    return messageFn(`It's S.A.L.T. Crew strike time`);
+    return messageFn(`It's Pepper Crew strike time <@241753116796649483>`);
   }
 };
