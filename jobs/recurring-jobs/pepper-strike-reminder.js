@@ -3,7 +3,7 @@ const { channelKeys } = require('@config/config.json');
 module.exports = {
   name: 'pepper-strike-time-reminder',
   recurrenceRule: {
-    hour: [22, 10],
+    hour: [23, 11],
     minute: 0,
     tz: 'Asia/Tokyo'
   },
