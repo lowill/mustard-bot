@@ -3,7 +3,7 @@ const { channelKeys } = require('@config/config.json');
 module.exports = {
   name: 'salt-strike-time-reminder',
   recurrenceRule: {
-    hour: [23, 10],
+    hour: [22, 23],
     minute: 0,
     tz: 'Asia/Tokyo'
   },
