@@ -10,10 +10,9 @@ module.exports = {
     return resources.DiscordUtils.resolveUser(userArg)
       .then(user => {
         return unjail.fetchJob(resources.DB, user.id, guildId)
-          .then(job => ({
-            job,
-            user
-          }));
+          .then(job => {
+            return job ? { job, user} : { job: { rowid: null }, user };
+          });
       })
       .then(res => {
         unjail.scheduleRemoval(resources.DiscordClient, 0, res.user.id, guildId, res.job.rowid);

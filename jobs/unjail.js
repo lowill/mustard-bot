@@ -21,7 +21,7 @@ function removeFromJail(discordClient, userId, guildId, jobId, roleId=4046603871
     .members.get(userId)
     .removeRole(roleId)
     .then(() => {
-      clearJob(DB, jobId);
+      if(jobId !== null) clearJob(DB, jobId);
       discordClient.channels.get(Channels.main.channelId).send(`<@userId> is free~`);
     });
 }
