@@ -23,7 +23,6 @@ function removeFromJail(discordClient, userId, guildId, jobId, roleId=4046603871
 }
 
 function clearJob(db=DB, jobId, tableName=jailTableName) {
-  console.log(arguments);
   return db.run(`
     DELETE FROM
     ${tableName}
