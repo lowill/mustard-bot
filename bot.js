@@ -144,33 +144,15 @@ client.commands.set(`salt`, {
     try {
       console.log(args);
 
-      args.forEach(arg => {
-        DiscordUtils.resolveUser(arg)
-          .then(res => console.log(`Got user`))
-          .catch(console.error);
-      });
-      // client.commands.get('get-inactive').execute(message, ['3'], resources);
-      // DB.all(`
-      //   SELECT *
-      //   FROM user_activity
-      // `).then(res => {
-      //     const userIds = res.map(row => row.user_id);
-      //     const users = message.guild.members.map(member => {
-      //       if(userIds.includes(member.user.id)) {
-      //         return {
-      //           id: member.user.id,
-      //           username: member.user.username,
-      //           last_active: moment(res.find(item => item.user_id === member.user.id).last_active).format()
-      //         }
-      //       }
-      //       else return null;
-      //     }).filter(item => item !== null);
-      //     // console.log(users);
-      //   })
-      //   .catch(console.error);
-      // console.log(client.users.map(user => user.username));
-      // console.log(client.users.size);
-      // console.log(client.users.filter(user => user.username.startsWith('zen')));
+      const Channels = require('@config/channels.json');
+      console.log(Channels.channels);
+      console.log(client.channels.get(Channels.channels.main.channelId));
+
+      // args.forEach(arg => {
+      //   DiscordUtils.resolveUser(arg)
+      //     .then(res => console.log(`Got user`))
+      //     .catch(console.error);
+      // });
     }
     catch(err) {
       console.error(err);
