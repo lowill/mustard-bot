@@ -1,5 +1,5 @@
 const Config = require('@config/config.json');
-const Channels = require('@config/channels.json');
+const Channels = require('@config/channels.json').channels;
 const DBUtils = require('@utils/DBUtils.js')
 const DB = new DBUtils.Connection(Config.db_filename);
 const moment = require('moment-timezone');
@@ -22,7 +22,7 @@ function removeFromJail(discordClient, userId, guildId, jobId, roleId=4046603871
     .removeRole(roleId)
     .then(() => {
       clearJob(DB, jobId);
-      discordClient.channels.get(Channels.channels.main).send(`<@userId> is free~`);
+      discordClient.channels.get(Channels.main.channelId).send(`<@userId> is free~`);
     });
 }
 
