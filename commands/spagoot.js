@@ -2,7 +2,7 @@ const moment = require('moment-timezone');
 
 const Config = require('@config/config.json');
 const prefix = Config.prefix;
-const DBUtils = require('@utils/DButils.js');
+const DBUtils = require('@utils/DBUtils.js');
 const DB = new DBUtils.Connection(Config.db_filename);
 const unjail = require('@jobs/unjail.js');
 const Utils = require('@utils/Utils.js');
