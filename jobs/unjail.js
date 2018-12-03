@@ -3,7 +3,7 @@ const Channels = require('@config/channels.json').channels;
 const DBUtils = require('@utils/DBUtils.js')
 const DB = new DBUtils.Connection(Config.db_filename);
 const moment = require('moment-timezone');
-const schedule = require('node-schedule-tz');
+const schedule = require('node-schedule');
 
 const jailTableName = `jailed_users`;
 const jailRoleId = '404660387108225025';
