@@ -1,3 +1,4 @@
+const moment = require('moment-timezone');
 const Config = require('@config/config.json');
 const unjail = require('@jobs/unjail.js');
 const commandName = `unspagoot`;
@@ -15,7 +16,8 @@ module.exports = {
           });
       })
       .then(res => {
-        unjail.scheduleRemoval(resources.DiscordClient, 0, res.user.id, guildId, res.job.rowid);
+        const removalTime = moment().add(500, 'milliseconds'); // Schedule for 1 second in advance to avoid any issues
+        unjail.scheduleRemoval(resources.DiscordClient, removalTime.unix(), res.user.id, guildId, res.job.rowid);
       });
   }
 }
