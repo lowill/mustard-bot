@@ -144,15 +144,15 @@ client.commands.set(`salt`, {
     try {
       console.log(args);
 
-      const Channels = require('@config/channels.json');
-      console.log(Channels.channels);
-      console.log(client.channels.get(Channels.channels.main.channelId));
+      // const Channels = require('@config/channels.json');
+      // console.log(Channels.channels);
+      // console.log(client.channels.get(Channels.channels.main.channelId));
 
-      // args.forEach(arg => {
-      //   DiscordUtils.resolveUser(arg)
-      //     .then(res => console.log(`Got user`))
-      //     .catch(console.error);
-      // });
+      args.forEach(arg => {
+        DiscordUtils.resolveUser(arg)
+          .then(res => console.log(`Got user`, res))
+          .catch(console.error);
+      });
     }
     catch(err) {
       console.error(err);
