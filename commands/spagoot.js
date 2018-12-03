@@ -94,7 +94,7 @@ function recordJail(db, userId, guildId, message) {
           console.error(`Failed to insert into ${jailTableName}, probably alread exists. `, err);
         })
         .then(() => {
-          message.channel.send(`${jail_count + 1}${Utils.getNumberSuffix(jail_count)} ${commandName}.  New sentence is ${duration_humanized}.`);
+          message.channel.send(`${next_jail_count}${Utils.getNumberSuffix(next_jail_count)} ${commandName}.  New sentence is ${duration_humanized}.`);
         })
     })
 }
