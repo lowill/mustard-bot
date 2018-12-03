@@ -64,7 +64,7 @@ function recordJail(db, userId, guildId, message) {
   return getJailCount(db, userId, guildId)
     .then(jail_count => {
       const next_jail_count = jail_count + 1;
-      const jail_duration = moment.duration(getJailTime(next_jail_count), 'minutes');
+      const jail_duration = moment.duration(getJailTime(jail_count), 'minutes');
       // const jail_duration = moment.duration(15, 'seconds'); // Test value
       const current_moment = moment();
       const free_time = current_moment.clone().add(jail_duration);
