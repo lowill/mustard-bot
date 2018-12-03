@@ -68,6 +68,7 @@ function recordJail(db, userId, guildId, message) {
       // const jail_duration = moment.duration(15, 'seconds'); // Test value
       const current_moment = moment();
       const free_time = current_moment.clone().add(jail_duration);
+      console.log(free_time.format());
       const duration_humanized = jail_duration.humanize();
 
       return db.run(`
@@ -88,14 +89,12 @@ function recordJail(db, userId, guildId, message) {
             `,
               [userId, guildId, next_jail_count]
             )
+          .then(() => message.channel.send(`${next_jail_count}${Utils.getNumberSuffix(next_jail_count)} ${commandName}.  New sentence is ${duration_humanized}.`))
           .then(() => ({ freeTime: free_time.unix(), rowId: lastInsert['last_insert_rowid()'] }));
         }, err => {
           message.reply(`User is already ${commandName}'d`);
           console.error(`Failed to insert into ${jailTableName}, probably alread exists. `, err);
-        })
-        .then(() => {
-          message.channel.send(`${next_jail_count}${Utils.getNumberSuffix(next_jail_count)} ${commandName}.  New sentence is ${duration_humanized}.`);
-        })
+        });
     })
 }
 
@@ -117,9 +116,9 @@ module.exports = {
     return resources.DiscordUtils.resolveUser(userArg)
       .then(user => {
         recordJail(resources.DB, user.id, guildId, message)
-          .then(lastJob => {
+          .then(job => {
             jailUser(resources.DiscordClient, user.id, guildId, jailRoleId)
-              .then(lastJob => unjail.scheduleRemoval(resources.DiscordClient, lastJob.freeTime, user.id, guildId, lastJob.rowId, jailRoleId))
+              .then(job => unjail.scheduleRemoval(resources.DiscordClient, job.freeTime, user.id, guildId, job.rowId, jailRoleId))
           })
       })
       .catch(err => {
