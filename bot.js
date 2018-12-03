@@ -23,6 +23,8 @@ client.commands = new Discord.Collection();
 const DBUtils = require('@utils/DBUtils.js');
 const DB = new DBUtils.Connection(Config.db_filename);
 
+const unjail = require('@jobs/unjail.js');
+
 // cmd args
 const argv = require('minimist')(process.argv.slice(2));
 const testMode = argv['test'] ? true : false;
@@ -30,8 +32,9 @@ const testMode = argv['test'] ? true : false;
 // this object makes our connection resources available across the app 
 const resources = {
   DiscordClient: client,
+  DiscordUtils: DiscordUtils,
   Jimp: Jimp,
-  DB: DB
+  DB: DB,
 };
 
 // initialize commands
@@ -95,8 +98,16 @@ client.commands.filter(command => command.type !== 'direct-attachment')
     const permission = command.permissions !== undefined 
       ? command.permissions 
       : 'everyone';
-    helpEmbeds[permission]
-      .addField(command.name, command.description);
+
+    try {
+      helpEmbeds[permission]
+        .addField(command.name, command.description);
+    }
+    catch(err) {
+      console.error(`FAILED ADDING HELP EMBED ON: `, command.name);
+      console.error(err.message);
+    }
+
   });
 
 const helpCommand = {
@@ -132,27 +143,34 @@ client.commands.set(`salt`, {
   execute(message, args) {
     try {
       console.log(args);
+
+      args.forEach(arg => {
+        DiscordUtils.resolveUser(arg)
+          .then(res => console.log(`Got user`))
+          .catch(console.error);
+      });
       // client.commands.get('get-inactive').execute(message, ['3'], resources);
-      DB.all(`
-        SELECT *
-        FROM user_activity
-      `).then(res => {
-          const userIds = res.map(row => row.user_id);
-          const users = message.guild.members.map(member => {
-            if(userIds.includes(member.user.id)) {
-              return {
-                id: member.user.id,
-                username: member.user.username,
-                last_active: moment(res.find(item => item.user_id === member.user.id).last_active).format()
-              }
-            }
-            else return null;
-          }).filter(item => item !== null);
-          // console.log(users);
-
-        })
-        .catch(console.error);
-
+      // DB.all(`
+      //   SELECT *
+      //   FROM user_activity
+      // `).then(res => {
+      //     const userIds = res.map(row => row.user_id);
+      //     const users = message.guild.members.map(member => {
+      //       if(userIds.includes(member.user.id)) {
+      //         return {
+      //           id: member.user.id,
+      //           username: member.user.username,
+      //           last_active: moment(res.find(item => item.user_id === member.user.id).last_active).format()
+      //         }
+      //       }
+      //       else return null;
+      //     }).filter(item => item !== null);
+      //     // console.log(users);
+      //   })
+      //   .catch(console.error);
+      // console.log(client.users.map(user => user.username));
+      // console.log(client.users.size);
+      // console.log(client.users.filter(user => user.username.startsWith('zen')));
     }
     catch(err) {
       console.error(err);
@@ -161,7 +179,7 @@ client.commands.set(`salt`, {
       if(!testMode) message.delete();
     }
   }
-})
+});
 // END TEST
 
 // Event handling
@@ -233,6 +251,8 @@ client.on('ready', () => {
   // Set the status text
   client.user.setPresence({ game: { name: `Say ~help for commands list` }, status: 'online' })
     .catch(console.error);
+
+  unjail.queueJobs(client);
 
   console.log(`${moment().format(Constants.loggingFormat)} Completed initialization tasks`);
   client.isReady = true;

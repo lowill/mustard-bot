@@ -75,15 +75,29 @@ function DiscordUtils(discordClient) {
       return eligiblePermissions;
     },
 
-    // TODO: Finish implementing
     // Resolve users in different ways. @mentions, IDs, and UName/Discriminator
     resolveUser(identifier) {
-      let result = null;
+      return new Promise((resolve, reject) => {
+        const idMatch = identifier.match(/^\d+$/);
+        if(idMatch !== null) {
+          resolve(discordClient.fetchUser(identifier));
+          return;
+        }
 
-      const idMatch = identifier.match(/^\d+$/);
-      if(idMatch !== null) {
-        result = discordClient.fetchUser(identifier);
-      }
+        const discriminatorMatch = identifier.match(/^(.*)#(\d{4})$/g);
+        if(discriminatorMatch !== null) {
+          resolve(discordClient.users.get(user => user.username === discriminatorMatch[1] && user.discriminator === discriminatorMatch[2]));
+          return;
+        }
+
+        const mentionMatch = identifier.match(/^<@!(\d+)>$/);
+        if(mentionMatch !== null) {
+          resolve(discordClient.fetchUser(mentionMatch[1]));
+          return;
+        }
+
+        return reject(`Failed to resolve user.`);
+      });
     },
 
     // You can add a max of 25 fields to an embed.

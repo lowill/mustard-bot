@@ -40,7 +40,12 @@ function logicalXOR(a, b) {
   return (a || b) && !(a && b);
 }
 
+function getNumberSuffix(n){
+  return [,'st','nd','rd'][n%100>>3^1&&n%10]||'th';
+}
+
 module.exports.objectDeepClone = objectDeepClone;
 module.exports.arrayDivide = arrayDivide;
 module.exports.logicalXOR = logicalXOR;
 module.exports.stringDivide = stringDivide;
+module.exports.getNumberSuffix = getNumberSuffix;
