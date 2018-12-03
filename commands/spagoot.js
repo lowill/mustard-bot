@@ -119,7 +119,7 @@ module.exports = {
         recordJail(resources.DB, user.id, guildId, message)
           .then(lastJob => {
             jailUser(resources.DiscordClient, user.id, guildId, jailRoleId)
-              .then(() => unjail.scheduleRemoval(resources.DiscordClient, lastJob.freeTime, user.id, guildId, lastJob.rowId, jailRoleId))
+              .then(lastJob => unjail.scheduleRemoval(resources.DiscordClient, lastJob.freeTime, user.id, guildId, lastJob.rowId, jailRoleId))
           })
       })
       .catch(err => {
