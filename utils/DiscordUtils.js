@@ -90,7 +90,7 @@ function DiscordUtils(discordClient) {
           return;
         }
 
-        const mentionMatch = identifier.match(/^<@!(\d+)>$/);
+        const mentionMatch = identifier.match(/^<@!?(\d+)>$/);
         if(mentionMatch !== null) {
           resolve(discordClient.fetchUser(mentionMatch[1]));
           return;
