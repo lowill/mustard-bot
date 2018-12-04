@@ -69,7 +69,8 @@ function recordJail(db, userId, guildId, message) {
       // const jail_duration = moment.duration(15, 'seconds'); // Test value
       const current_moment = moment();
       const free_time = current_moment.clone().add(jail_duration);
-      const duration_humanized = jail_duration.humanize();
+      // const duration_humanized = jail_duration.humanize();
+      const duration_humanized = `${jail_duration.asMinutes()} minutes`;
 
       return db.run(`
           INSERT INTO ${jailTableName} 
