@@ -28,7 +28,7 @@ function removeFromJail(discordClient, userId, guildId, jobId, roleId=4046603871
 
       const jobKey = getJobKey(userId, guildId);
       const existingJob = scheduledUnjails.get(jobKey);
-      schedule.cancel(existingJob)
+      existingJob.cancel();
       scheduledUnjails.delete(jobKey);
     });
 }
