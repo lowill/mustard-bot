@@ -1,6 +1,7 @@
 const moment = require('moment-timezone');
 
 const Config = require('@config/config.json');
+const Constants = require('@constants/Constants.js');
 const prefix = Config.prefix;
 const DBUtils = require('@utils/DBUtils.js');
 const DB = new DBUtils.Connection(Config.db_filename);
@@ -8,12 +9,10 @@ const unjail = require('@jobs/unjail.js');
 const Utils = require('@utils/Utils.js');
 
 const commandName = `spagoot`;
-const jailTableName = `jailed_users`;
-const jailHistoryTableName = `jail_history`;
 
 const jailRoleId = '404660387108225025';
 
-(function createJailTable(db=DB, tableName=jailTableName) {
+(function createJailTable(db=DB, tableName=Constants.jailTableName) {
   return db.run(`
       CREATE TABLE
       IF NOT EXISTS ${tableName}
@@ -28,7 +27,7 @@ const jailRoleId = '404660387108225025';
     `);
 }());
 
-(function createJailHistoryTable(db=DB, tableName=jailHistoryTableName) {
+(function createJailHistoryTable(db=DB, tableName=Constants.jailHistoryTableName) {
   return db.run(`
       CREATE TABLE
       IF NOT EXISTS ${tableName}
@@ -45,7 +44,7 @@ const jailRoleId = '404660387108225025';
 function getJailCount(db, userId, guildId) {
   return db.get(`
       SELECT jail_count
-      FROM ${jailHistoryTableName}
+      FROM ${Constants.jailHistoryTableName}
       WHERE user_id=? AND guild_id=?
        `,
         [userId, guildId]
@@ -73,7 +72,7 @@ function recordJail(db, userId, guildId, message) {
       const duration_humanized = `${jail_duration.asMinutes()} minutes`;
 
       return db.run(`
-          INSERT INTO ${jailTableName} 
+          INSERT INTO ${Constants.jailTableName} 
           ( user_id, guild_id, free_timestamp, start_timestamp, duration )
           VALUES
           ( ?, ?, ?, ?, ? )
@@ -83,18 +82,18 @@ function recordJail(db, userId, guildId, message) {
         .then(() => db.get(`SELECT last_insert_rowid()`))
         .then(lastInsert => {
           return db.run(`
-            REPLACE INTO ${jailHistoryTableName}
+            REPLACE INTO ${Constants.jailHistoryTableName}
             ( user_id, guild_id, jail_count )
             VALUES
             ( ?, ?, ? )
             `,
               [userId, guildId, next_jail_count]
             )
-          .then(() => message.channel.send(`${next_jail_count}${Utils.getNumberSuffix(next_jail_count)} ${commandName}.  New sentence is ${duration_humanized}.`))
+          .then(() => message.channel.send(`${next_jail_count}${Utils.getNumberSuffix(next_jail_count)} ${commandName}.  You are sentenced to ${duration_humanized} in 🍝.`))
           .then(() => ({ freeTime: free_time.unix(), rowId: lastInsert['last_insert_rowid()'] }));
         }, err => {
           message.reply(`User is already ${commandName}'d`);
-          console.error(`Failed to insert into ${jailTableName}, probably alread exists. `, err);
+          console.error(`Failed to insert into ${Constants.jailTableName}, probably alread exists. `, err);
         });
     })
 }
