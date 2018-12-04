@@ -8,6 +8,8 @@ const schedule = require('node-schedule');
 const jailTableName = `jailed_users`;
 const jailRoleId = '404660387108225025';
 
+const scheduledUnjails = new Map();
+
 function fetchJailedUsers(db=DB, tableName=jailTableName) {
   return db.all(`
     SELECT ROWID, *
@@ -22,8 +24,8 @@ function removeFromJail(discordClient, userId, guildId, jobId, roleId=4046603871
     .removeRole(roleId)
     .then(() => {
       if(jobId !== null) clearJob(DB, jobId);
-      console.log('sending message???');
-      // discordClient.channels.get(Channels.main.channelId).send(`<@${userId}> is free~`);
+      discordClient.channels.get(Channels.main.channelId).send(`<@${userId}> is free~`);
+      scheduledUnjails.delete(getJobKey(userId, guildId));
     });
 }
 
@@ -47,17 +49,21 @@ function fetchJob(db=DB, userId, guildId, tableName=jailTableName) {
   );
 }
 
+function getJobKey(userId, guildId) {
+  return `user:${userId} guild:${guildId}`;
+}
+
 function scheduleRemoval(discordClient, timestamp, userId, guildId, jobId, roleId=jailRoleId) {
   const removalTime = moment.unix(timestamp);
   const date = removalTime.toDate();
   const currentTime = moment();
   const currentTimestamp = currentTime.unix();
-  console.log(`${currentTime.format()} > ${removalTime.format()} ? ${currentTimestamp > timestamp}`);
   if(currentTimestamp > timestamp) {
     removeFromJail(discordClient, userId, guildId, jobId, roleId);
   }
   else {
-    schedule.scheduleJob(date, removeFromJail.bind({}, discordClient, userId, guildId, jobId, roleId));
+    const job = schedule.scheduleJob(date, removeFromJail.bind({}, discordClient, userId, guildId, jobId, roleId));
+    scheduledUnjails.set(getJobKey(userId, guildId), job);
   }
 }
 

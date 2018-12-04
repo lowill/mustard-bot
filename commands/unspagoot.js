@@ -16,7 +16,7 @@ module.exports = {
           });
       })
       .then(res => {
-        const removalTime = moment().add(500, 'milliseconds'); // Schedule for 1 second in advance to avoid any issues
+        const removalTime = moment().add(1, 'second'); // Schedule for 1 second in advance to avoid any issues
         unjail.scheduleRemoval(resources.DiscordClient, removalTime.unix(), res.user.id, guildId, res.job.rowid);
       });
   }
