@@ -22,7 +22,8 @@ function removeFromJail(discordClient, userId, guildId, jobId, roleId=4046603871
     .removeRole(roleId)
     .then(() => {
       if(jobId !== null) clearJob(DB, jobId);
-      discordClient.channels.get(Channels.main.channelId).send(`<@${userId}> is free~`);
+      console.log('sending message???');
+      // discordClient.channels.get(Channels.main.channelId).send(`<@${userId}> is free~`);
     });
 }
 
@@ -47,8 +48,11 @@ function fetchJob(db=DB, userId, guildId, tableName=jailTableName) {
 }
 
 function scheduleRemoval(discordClient, timestamp, userId, guildId, jobId, roleId=jailRoleId) {
-  const date = moment.unix(timestamp).toDate();
-  const currentTimestamp = moment().unix();
+  const removalTime = moment.unix(timestamp);
+  const date = removalTime.toDate();
+  const currentTime = moment();
+  const currentTimestamp = currentTime.unix();
+  console.log(`${currentTime.format()} > ${removalTime.format()} ? ${currentTimestamp > timestamp}`);
   if(currentTimestamp > timestamp) {
     removeFromJail(discordClient, userId, guildId, jobId, roleId);
   }

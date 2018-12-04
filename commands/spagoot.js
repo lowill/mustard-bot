@@ -58,6 +58,7 @@ function getJailCount(db, userId, guildId) {
 
 function getJailTime(count) {
   return count * 5 + 30;
+  // return 1;
 }
 
 function recordJail(db, userId, guildId, message) {
@@ -68,7 +69,6 @@ function recordJail(db, userId, guildId, message) {
       // const jail_duration = moment.duration(15, 'seconds'); // Test value
       const current_moment = moment();
       const free_time = current_moment.clone().add(jail_duration);
-      console.log(free_time.format());
       const duration_humanized = jail_duration.humanize();
 
       return db.run(`
@@ -118,7 +118,9 @@ module.exports = {
         recordJail(resources.DB, user.id, guildId, message)
           .then(job => {
             jailUser(resources.DiscordClient, user.id, guildId, jailRoleId)
-              .then(job => unjail.scheduleRemoval(resources.DiscordClient, job.freeTime, user.id, guildId, job.rowId, jailRoleId))
+              .then(() => {
+                unjail.scheduleRemoval(resources.DiscordClient, job.freeTime, user.id, guildId, job.rowId, jailRoleId)
+              });
           })
       })
       .catch(err => {
