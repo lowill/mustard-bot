@@ -25,7 +25,11 @@ function removeFromJail(discordClient, userId, guildId, jobId, roleId=4046603871
     .then(() => {
       if(jobId !== null) clearJob(DB, jobId);
       discordClient.channels.get(Channels.main.channelId).send(`<@${userId}> is free~`);
-      scheduledUnjails.delete(getJobKey(userId, guildId));
+
+      const jobKey = getJobKey(userId, guildId);
+      const existingJob = scheduledUnjails.get(jobKey);
+      schedule.cancel(existingJob);
+      scheduledUnjails.delete(jobKey);
     });
 }
 
