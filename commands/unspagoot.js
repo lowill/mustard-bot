@@ -5,6 +5,7 @@ const commandName = `unspagoot`;
 module.exports = {
   name: commandName,
   description: `Unjail the specified user.  Usage: ${'``'}${Config.prefix}${commandName} [user]${'``'}`,
+  permissions: `officer`,
   execute(message, args, resources) {
     const guildId = message.guild.id;
     const userArg = args[0];
