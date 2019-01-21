@@ -2,7 +2,7 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const { channelKeys } = require('@config/config.json');
 
-const imagePath = './images/hallotoot.png';
+const imagePath = './images/toot.png';
 if(!fs.existsSync(imagePath)) {
   throw new Error(`File not found at ${imagePath}`);
 }
