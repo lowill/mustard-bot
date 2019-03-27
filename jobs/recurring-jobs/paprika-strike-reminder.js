@@ -12,6 +12,6 @@ module.exports = {
     'channelKey': channelKeys.main
   },
   jobFunction: messageFn => {
-    return messageFn(`<@&560457709254737920> It's Paprika crew strike time!`);
+    return messageFn(`<@&560457709254737920> It's Paprika Crew strike time!`);
   }
 };
