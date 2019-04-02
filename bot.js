@@ -25,6 +25,9 @@ const DB = new DBUtils.Connection(Config.db_filename);
 
 const unjail = require('@jobs/unjail.js');
 
+// fools joke
+const fools = require('./fools/index.js');
+
 // cmd args
 const argv = require('minimist')(process.argv.slice(2));
 const testMode = argv['test'] ? true : false;
@@ -237,6 +240,10 @@ client.on('ready', () => {
   unjail.queueJobs(client);
 
   console.log(`${moment().format(Constants.loggingFormat)} Completed initialization tasks`);
+
+  // FOOLS
+  fools.fool(client);
+  // END FOOLS
   client.isReady = true;
 });
 
