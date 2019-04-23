@@ -39,19 +39,22 @@ module.exports = {
       const username = match[1];
       const discriminator = match[2].substring(1); // Omit the hash
       // Refactor user -> member "user" is incorrect
-      const user = message.guild.members.find(member => member.user.username === username && member.user.discriminator === discriminator);
+      // const user = message.guild.members.find(member => member.user.username === username && member.user.discriminator === discriminator);
+      const user = resources.DiscordUtils.resolveUser();
 
       if(user) {
         if(!user.dmChannel) {
           return user.createDM()
             .then(channel => {
-              return channel.send(inactivityEmbed);
+              return channel.send(inactivityEmbed)
+                .then(() => message.react('✔'));
             })
             .catch(console.error);
         }
         else {
           const channelId = user.dmChannel;
           return resources.DiscordClient.channels.find(channel => channel.id === channelId).send(inactivityEmbed)
+            .then(() => message.react('✔'))
             .catch(console.error);
         }
       }
