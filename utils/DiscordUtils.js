@@ -84,9 +84,9 @@ function DiscordUtils(discordClient) {
           return;
         }
 
-        const discriminatorMatch = identifier.match(/^(.*)#(\d{4})$/g);
+        const discriminatorMatch = identifier.match(/^(.*)#(\d{4})$/);
         if(discriminatorMatch !== null) {
-          resolve(discordClient.users.get(user => user.username === discriminatorMatch[1] && user.discriminator === discriminatorMatch[2]));
+          resolve(discordClient.users.find(user => user.username === discriminatorMatch[1] && user.discriminator === discriminatorMatch[2]));
           return;
         }
 
