@@ -8,7 +8,7 @@
     "discord.js": "^11.4.2",
     "jimp": "^0.5.3",
     "joi": "^13.6.0",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.6",
     "module-alias": "^2.1.0",
     "moment-timezone": "^0.5.21",
     "node-schedule": "^1.3.0",
